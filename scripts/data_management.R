@@ -6,6 +6,10 @@ rm(list = ls())
 
 # Load packages
 library(tidyverse)
+library(ggfortify)
+library(emmeans)
+library(multcomp)
+library(multcompView)
 
 # Load in datasets
 wtsp_sex_morph_data <- read.csv("data/WTSP_sex_morph_data.csv")
@@ -20,7 +24,7 @@ wtsp_agonistic_data <- read.csv("data/WTSP_agonistic_behavior_data.csv")
 # Year, Age, and Month to use mutate to add 2023 age and 2024 age
 wtsp_banding_data <- wtsp_banding_data %>%
   filter(New_Recap == "N") %>%
-  select(SampleID, Wing, BirdAge, Year, Month)
+  dplyr::select(SampleID, Wing, BirdAge, Year, Month)
 
 # Mutate to autofill age for 2023
 # Have to use a lot of Boolean operators to get the right result
@@ -43,22 +47,27 @@ wtsp_banding_data <- wtsp_banding_data %>%
 
 # Select what we need from the sex and morph data
 wtsp_sex_morph_data <- wtsp_sex_morph_data %>%
-  select(SampleID, PCRsex, PCRMorph)
+  dplyr::select(SampleID, PCRsex, PCRMorph)
 
 # Select what we need from the banding data
 wtsp_banding_data <- wtsp_banding_data %>%
-  select(SampleID, Wing, age_2023, age_2024)
+  dplyr::select(SampleID, Wing, age_2023, age_2024)
+
+# Create a column for just rate of lunges, and if lunges occurred
+wtsp_agonistic_data <- wtsp_agonistic_data %>%
+  mutate(Lunge_Rate = Lunge/Platform_Time) %>%
+  mutate(Lunge_Occurrence = ifelse(Lunge_Rate == 0, 0,1))
 
 # Select what we need, or in this case don't need from agonistic data
 wtsp_agonistic_data <- wtsp_agonistic_data %>%
-  select(-Lunge, -Displacement, -Fight, -Chase, -Colors.Left.Top.Bottom,
-         -Colors.Right.Top.Bottom, -Platform_Time, -Total_Agonistic)
+  dplyr::select(-Lunge, -Displacement, -Fight, -Chase, -Colors.Left.Top.Bottom,
+         -Colors.Right.Top.Bottom, -Platform_Time, -Total_Agonistic, -Comments)
 
 # Merge sex and morph with the banding data
 smb_data <- full_join(wtsp_banding_data, wtsp_sex_morph_data, by = "SampleID")
 
-# Here we would perform analyses for wing by sex and morph then use mutate to adjust wing
-# length for sex and morph to create a new adjusted wing variable
+# Now adjust wing by sex and morph
+
 
 # Now merge with the agonistic data
 # we only want to add to agonistic data so we use left_join
@@ -73,7 +82,8 @@ agonistic_analysis_data <- agonistic_analysis_data %>%
 # Clean up a bit by removing age 2023 and 2024 with the - sign and select 
 # Doing some of this separate just so we can check each step if my code was right
 agonistic_analysis_data <- agonistic_analysis_data %>%
-   select(-age_2023, -age_2024)
+   dplyr::select(-age_2023, -age_2024)
+
 
 # Save the Resulting dataset which we will use for all analyses
 write_excel_csv(agonistic_analysis_data, "data/agonistic_analysis_data.csv")
