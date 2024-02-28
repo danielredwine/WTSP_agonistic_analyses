@@ -335,7 +335,7 @@ age_agonistic_bar <- ggplot(age_agonistic_summary, aes(x = Winter, y = mean_agon
 
 age_agonistic_bar
 
-ggsave("output/sex_agonistic_bar.png")
+ggsave("output/age_agonistic_bar.png")
 
 
 
