@@ -284,7 +284,7 @@ ggsave("output/individual_aggression_plot.png")
 
 # Bar charts from mean data
 sex_agonistic_summary <- agonistic_analysis_data %>%
-  filter(PCRsex != NA | PCRsex != "X") %>%
+  filter(PCRsex == "M" | PCRsex == "F") %>%
   group_by(PCRsex) %>%
   summarise(mean_agonistic = mean(Agonistic_Rate), se_agonistic = 
               sd(Agonistic_Rate/sqrt(n())))
@@ -302,12 +302,12 @@ sex_agonistic_bar
 ggsave("output/sex_agonistic_bar.png")
 
 morph_agonistic_summary <- agonistic_analysis_data %>%
-  filter(PCRMorph != NA | PCRMorph != "X") %>%
+  filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
   group_by(PCRMorph) %>%
   summarise(mean_agonistic = mean(Agonistic_Rate), se_agonistic = 
               sd(Agonistic_Rate/sqrt(n())))
 
-morph_agonistic_bar <- ggplot(sex_agonistic_summary, aes(x = PCRMorph, y = mean_agonistic)) +
+morph_agonistic_bar <- ggplot(morph_agonistic_summary, aes(x = PCRMorph, y = mean_agonistic)) +
   geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
   geom_errorbar(aes(ymin = mean_agonistic - se_agonistic,
                     ymax = mean_agonistic + se_agonistic), width = 0.1) +
@@ -316,6 +316,24 @@ morph_agonistic_bar <- ggplot(sex_agonistic_summary, aes(x = PCRMorph, y = mean_
   ylab("Mean Agonistic Rate (interactions/s)")
 
 morph_agonistic_bar
+
+ggsave("output/morph_agonistic_bar.png")
+
+age_agonistic_summary <- agonistic_analysis_data %>%
+  filter(Winter == "FW" | Winter == "AFW") %>%
+  group_by(Winter) %>%
+  summarise(mean_agonistic = mean(Agonistic_Rate), se_agonistic = 
+              sd(Agonistic_Rate/sqrt(n())))
+
+age_agonistic_bar <- ggplot(age_agonistic_summary, aes(x = Winter, y = mean_agonistic)) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
+  geom_errorbar(aes(ymin = mean_agonistic - se_agonistic,
+                    ymax = mean_agonistic + se_agonistic), width = 0.1) +
+  theme_bw() +
+  xlab("Age") +
+  ylab("Mean Agonistic Rate (interactions/s)")
+
+age_agonistic_bar
 
 ggsave("output/sex_agonistic_bar.png")
 
