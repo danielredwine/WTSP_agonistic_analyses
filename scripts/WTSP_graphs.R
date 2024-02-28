@@ -258,3 +258,66 @@ wing_agonistic_nonzero <- ggplot(wing_nonzero, aes(Wing, Agonistic_Rate)) +
 wing_agonistic_nonzero
 
 ggsave("output/agonistic_wing_nonzero.png")
+
+# Aggression of individuals in the study
+individual_aggression <- agonistic_analysis_data %>%
+  filter(SampleID != "") %>%
+  group_by(SampleID, PCRsex, PCRMorph) %>%
+  summarise(
+    mean_agonistic = mean(Agonistic_Rate),
+    se_agonistic = sd(Agonistic_Rate)/sqrt(n()))
+
+# Reorder to plot
+individual_aggression_plot <- ggplot(individual_aggression, aes(x = reorder(SampleID,
+    -mean_agonistic), y = mean_agonistic)) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill ="skyblue") +
+  geom_errorbar(aes(ymin = mean_agonistic - se_agonistic,
+                    ymax = mean_agonistic + se_agonistic), width = 0.1) +
+  theme_bw() +
+  ylab("Mean Agonistic Rate (interactions/s)") +
+  xlab("Sample ID") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+individual_aggression_plot
+
+ggsave("output/individual_aggression_plot.png")
+
+# Bar charts from mean data
+sex_agonistic_summary <- agonistic_analysis_data %>%
+  filter(PCRsex != NA | PCRsex != "X") %>%
+  group_by(PCRsex) %>%
+  summarise(mean_agonistic = mean(Agonistic_Rate), se_agonistic = 
+              sd(Agonistic_Rate/sqrt(n())))
+
+sex_agonistic_bar <- ggplot(sex_agonistic_summary, aes(x = PCRsex, y = mean_agonistic)) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
+  geom_errorbar(aes(ymin = mean_agonistic - se_agonistic,
+                    ymax = mean_agonistic + se_agonistic), width = 0.1) +
+  theme_bw() +
+  xlab("Sex") +
+  ylab("Mean Agonistic Rate (interactions/s)")
+
+sex_agonistic_bar
+
+ggsave("output/sex_agonistic_bar.png")
+
+morph_agonistic_summary <- agonistic_analysis_data %>%
+  filter(PCRMorph != NA | PCRMorph != "X") %>%
+  group_by(PCRMorph) %>%
+  summarise(mean_agonistic = mean(Agonistic_Rate), se_agonistic = 
+              sd(Agonistic_Rate/sqrt(n())))
+
+morph_agonistic_bar <- ggplot(sex_agonistic_summary, aes(x = PCRMorph, y = mean_agonistic)) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
+  geom_errorbar(aes(ymin = mean_agonistic - se_agonistic,
+                    ymax = mean_agonistic + se_agonistic), width = 0.1) +
+  theme_bw() +
+  xlab("Morph") +
+  ylab("Mean Agonistic Rate (interactions/s)")
+
+morph_agonistic_bar
+
+ggsave("output/sex_agonistic_bar.png")
+
+
+
