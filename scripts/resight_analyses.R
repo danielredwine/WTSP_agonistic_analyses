@@ -27,19 +27,19 @@ wtsp_banding_data <- wtsp_banding_data %>%
 # AFW is after first winter, FW is first winter
 wtsp_banding_data <- wtsp_banding_data %>%
   mutate(wtsp_banding_data, age_2023 = ifelse(Year == 2020 | Year == 2021 | 
-                                                (Year == 2022 & (Month == 1 | Month == 2 | Month == 3 | Month == 4 | Month == 5)) | 
-                                                ((Year == 2022 & BirdAge == "AHY") | (Year == 2023 & BirdAge == "ASY")), "AFW", 
-                                              ifelse((Year == 2022 & BirdAge == "HY") | (Year == 2023 & BirdAge == "SY"), "FW",
-                                                     NA)))
+          (Year == 2022 & (Month == 1 | Month == 2 | Month == 3 | Month == 4 | Month == 5)) | 
+          ((Year == 2022 & BirdAge == "AHY") | (Year == 2023 & BirdAge == "ASY")), "AFW", 
+          ifelse((Year == 2022 & BirdAge == "HY") | (Year == 2023 & BirdAge == "SY"), "FW",
+                 NA)))
 
 # Mutate to autofill age for 2024
 wtsp_banding_data <- wtsp_banding_data %>%
   mutate(wtsp_banding_data, age_2024 = ifelse(Year == 2020 | Year == 2021 |
-                                                Year == 2022 |
-                                                (Year == 2023 & (Month == 1 | Month == 2 | Month == 3 | Month == 4 | Month == 5)) | 
-                                                ((Year == 2023 & BirdAge == "AHY") | (Year == 2024 & BirdAge == "ASY")), "AFW", 
-                                              ifelse((Year == 2023 & BirdAge == "HY") | (Year == 2024 & BirdAge == "SY"), "FW",
-                                                     NA)))
+          Year == 2022 |
+          (Year == 2023 & (Month == 1 | Month == 2 | Month == 3 | Month == 4 | Month == 5)) | 
+          ((Year == 2023 & BirdAge == "AHY") | (Year == 2024 & BirdAge == "ASY")), "AFW", 
+          ifelse((Year == 2023 & BirdAge == "HY") | (Year == 2024 & BirdAge == "SY"), "FW",
+                NA)))
 
 # Select what we need from the sex and morph data
 wtsp_sex_morph_data <- wtsp_sex_morph_data %>%
