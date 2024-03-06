@@ -188,7 +188,8 @@ ggsave("output/age_aggressor_count.png")
 # Graph aggressor occurrence for wing 
 wing_binomial <- ggplot(wing_data, aes(Wing, Aggressor_Occurrence)) +
   geom_count(show.legend = FALSE) + # Geom count changes size of points to count
-  geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")), color = "slateblue", fill = "lightskyblue2") + # Geom smooth can use the model to create curve and CI
+  geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")), 
+    color = "slateblue", fill = "lightskyblue2") +
   ylab ("Occurrence of Aggression") +
   xlab ("Wing Chord (mm)") +
   theme_bw()
@@ -212,7 +213,7 @@ wing_nonzero <- wing_data %>%
   filter(Agonistic_Rate != 0)
 
 # boxplot for sex nonzero data
-sex_agonistic_nonzero <- ggplot(sex_nonzero, aes(PCRsex, Agonistic_Rate, fill = PCRsex)) + 
+sex_agonistic_nonzero <- ggplot(sex_nonzero, aes(PCRsex, Agonistic_Rate, fill = PCRsex)) +
   geom_boxplot() +
   theme_bw() +
   xlab("Sex") +
@@ -224,7 +225,8 @@ sex_agonistic_nonzero
 ggsave("output/agonistic_sex_nonzero.png")
 
 # boxplot for nonzero morph data 
-morph_agonistic_nonzero <- ggplot(morph_nonzero, aes(PCRMorph, Agonistic_Rate, fill = PCRMorph)) + 
+morph_agonistic_nonzero <- ggplot(morph_nonzero, aes(PCRMorph, Agonistic_Rate, 
+    fill = PCRMorph)) + 
   geom_boxplot() +
   theme_bw() +
   xlab("Morph") +
@@ -307,7 +309,8 @@ morph_agonistic_summary <- agonistic_analysis_data %>%
   summarise(mean_agonistic = mean(Agonistic_Rate), se_agonistic = 
               sd(Agonistic_Rate/sqrt(n())))
 
-morph_agonistic_bar <- ggplot(morph_agonistic_summary, aes(x = PCRMorph, y = mean_agonistic)) +
+morph_agonistic_bar <- ggplot(morph_agonistic_summary, aes(x = PCRMorph, 
+        y = mean_agonistic)) +
   geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
   geom_errorbar(aes(ymin = mean_agonistic - se_agonistic,
                     ymax = mean_agonistic + se_agonistic), width = 0.1) +
