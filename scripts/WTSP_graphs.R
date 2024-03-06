@@ -337,5 +337,20 @@ age_agonistic_bar
 
 ggsave("output/age_agonistic_bar.png")
 
+# count of number of times each individual occurs at each platform
+individual_platform_count <- agonistic_analysis_data %>%
+  count(SampleID, Platform) %>%
+  filter(SampleID != "")
 
+# Reorder to plot
+individual_platform_plot <- ggplot(individual_platform_count, 
+      aes(x = reorder(SampleID, -n),y = n, fill = Platform)) +
+  geom_bar(stat = "identity", position = "stack") +
+  theme_bw() +
+  ylab("Count") +
+  xlab("Sample ID") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
+individual_platform_plot
+
+ggsave("output/individual_platform_plot.png")
