@@ -20,12 +20,15 @@ agonistic_analysis_data$Agonistic_Rate <- as.numeric(agonistic_analysis_data$Ago
 agonistic_analysis_data$Lunge_Rate <- as.numeric(agonistic_analysis_data$Lunge_Rate)
 agonistic_analysis_data$Lunge_Occurrence <- as.numeric(agonistic_analysis_data$Lunge_Occurrence)
 agonistic_analysis_data$Recipient_Occurrence <- as.numeric(agonistic_analysis_data$Recipient_Occurrence)
+agonistic_analysis_data$Recipient_rate <- as.numeric(agonistic_analysis_data$Recipient_rate)
+agonistic_analysis_data$Feeding_Density <- as.numeric(agonistic_analysis_data$Feeding_Density)
+
 
 
 # Clean out NA and X
 total_data <- agonistic_analysis_data %>%
-  dplyr::select(SampleID, Winter, Wing, PCRsex, PCRMorph, Agonistic_Rate, Lunge_Rate,
-                Lunge_Occurrence, Aggressor_Occurrence, Recipient_Occurrence) %>%
+  dplyr::select(SampleID, Winter, Wing, PCRsex, PCRMorph, Agonistic_Rate, Platform_Time, Aggressor_Occurrence, Recipient_Occurrence, 
+                Recipient_rate, Feeding_Density) %>%
   na.omit() %>%
   filter(Winter == "FW" | Winter == "AFW") %>%
   filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
@@ -91,7 +94,7 @@ age_agonistic
 ggsave("output/agonistic_age.png")
 
 # scatterplot for wing data
-wing_agonistic <- ggplot(wing_data, aes(Wing, Agonistic_Rate)) + 
+wing_agonistic <- ggplot(total_data, aes(Wing, Agonistic_Rate)) + 
   geom_point() +
   geom_smooth(method="lm") +
   theme_bw() +
@@ -102,8 +105,20 @@ wing_agonistic
 
 ggsave("output/agonistic_wing.png")
 
+# scatterplot for density data
+density_agonistic <- ggplot(total_data, aes(Feeding_Density, Agonistic_Rate)) + 
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_bw() +
+  ylab("Interactions/sec") +
+  xlab("Feeding Density")
+
+density_agonistic
+
+ggsave("output/agonistic_density.png")
+
 # histogram for rate of agonistic behavior
-agonistic_histogram <- ggplot(agonistic_analysis_data, aes(x = Agonistic_Rate)) +
+agonistic_histogram <- ggplot(total_data, aes(x = Agonistic_Rate)) +
   geom_histogram(binwidth = 0.025, colour="black", fill="skyblue") +
   theme_bw()+
   ylab("Count") +
@@ -115,7 +130,7 @@ ggsave("output/agonistic_histogram.png")
 
 # Bar chart for sex aggression occurrence
 # Organize data for plotting/analysis
-sex_count_data <- sex_data %>%
+sex_count_data <- total_data %>%
   count(PCRsex, Aggressor_Occurrence)
 
 sex_count_data$Aggressor_Occurrence <- as.factor(sex_count_data$Aggressor_Occurrence)
@@ -127,9 +142,9 @@ sex_count_data <- sex_count_data %>%
 # Graph using bar chart 
 sex_aggressor_count <- ggplot(sex_count_data, aes(x = PCRsex, y = n, 
                                                        fill = Aggressor_Occurrence)) +
-  geom_bar(stat = 'identity', position = 'stack') +
+  geom_bar(stat = 'identity', position = 'fill') +
   xlab("Sex") +
-  ylab("Count") + 
+  ylab("Proportion") + 
   theme_bw()+
   theme(legend.title=element_blank())
 
@@ -139,7 +154,7 @@ ggsave("output/sex_aggressor_count.png")
 
 # Bar chart for morph aggression occurrence
 # Organize data for plotting/analysis
-morph_count_data <- morph_data %>%
+morph_count_data <- total_data %>%
   count(PCRMorph, Aggressor_Occurrence)
 
 morph_count_data$Aggressor_Occurrence <- as.factor(morph_count_data$Aggressor_Occurrence)
@@ -151,9 +166,9 @@ morph_count_data <- morph_count_data %>%
 # Graph using bar chart 
 morph_aggressor_count <- ggplot(morph_count_data, aes(x = PCRMorph, y = n, 
                                                   fill = Aggressor_Occurrence)) +
-  geom_bar(stat = 'identity', position = 'stack') +
+  geom_bar(stat = 'identity', position = 'fill') +
   xlab("Morph") +
-  ylab("Count") + 
+  ylab("Proportion") + 
   theme_bw()+
   theme(legend.title=element_blank())
 
@@ -163,7 +178,7 @@ ggsave("output/morph_aggressor_count.png")
 
 # Bar chart for age aggression occurrence
 # Organize data for plotting/analysis
-age_count_data <- age_data %>%
+age_count_data <- total_data %>%
   count(Winter, Aggressor_Occurrence)
 
 age_count_data$Aggressor_Occurrence <- as.factor(age_count_data$Aggressor_Occurrence)
@@ -175,9 +190,9 @@ age_count_data <- age_count_data %>%
 # Graph using bar chart 
 age_aggressor_count <- ggplot(age_count_data, aes(x = Winter, y = n, 
                                                   fill = Aggressor_Occurrence)) +
-  geom_bar(stat = 'identity', position = 'stack') +
+  geom_bar(stat = 'identity', position = 'fill') +
   xlab("Age") +
-  ylab("Count") + 
+  ylab("Proportion") + 
   theme_bw()+
   theme(legend.title=element_blank())
 
@@ -186,7 +201,7 @@ age_aggressor_count
 ggsave("output/age_aggressor_count.png")
 
 # Graph aggressor occurrence for wing 
-wing_binomial <- ggplot(wing_data, aes(Wing, Aggressor_Occurrence)) +
+wing_binomial <- ggplot(total_data, aes(Wing, Aggressor_Occurrence)) +
   geom_count(show.legend = FALSE) + # Geom count changes size of points to count
   geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")), 
     color = "slateblue", fill = "lightskyblue2") +
@@ -198,6 +213,34 @@ wing_binomial <- ggplot(wing_data, aes(Wing, Aggressor_Occurrence)) +
 wing_binomial #Call object 
 
 ggsave("output/wing_binomial.png")
+
+# Graph aggressor occurrence for feeding density
+density_binomial <- ggplot(total_data, aes(Feeding_Density, Aggressor_Occurrence)) +
+  geom_count(show.legend = FALSE) + # Geom count changes size of points to count
+  geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")), 
+              color = "slateblue", fill = "lightskyblue2") +
+  ylab ("Occurrence of Aggression") +
+  xlab ("Feeding Density") +
+  theme_bw()
+# Create a graph with male/female (1/0) on y and wing chord on x 
+
+density_binomial #Call object 
+
+ggsave("output/density_binomial.png")
+
+# Graph aggressor occurrence for platform time
+platform_time_binomial <- ggplot(total_data, aes(Platform_Time, Aggressor_Occurrence)) +
+  geom_point(show.legend = FALSE) + # Geom count changes size of points to count
+  geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")), 
+              color = "slateblue", fill = "lightskyblue2") +
+  ylab ("Occurrence of Aggression") +
+  xlab ("Conspecific Feeding Time (s)") +
+  theme_bw()
+# Create a graph with male/female (1/0) on y and wing chord on x 
+
+platform_time_binomial #Call object 
+
+ggsave("output/platform_time_binomial.png")
 
 # looking at total interactions with nonzero data
 sex_nonzero <- sex_data %>%
@@ -262,7 +305,7 @@ wing_agonistic_nonzero
 ggsave("output/agonistic_wing_nonzero.png")
 
 # Aggression of individuals in the study
-individual_aggression <- agonistic_analysis_data %>%
+individual_aggression <- total_data %>%
   filter(SampleID != "") %>%
   group_by(SampleID, PCRsex, PCRMorph) %>%
   summarise(
@@ -285,7 +328,7 @@ individual_aggression_plot
 ggsave("output/individual_aggression_plot.png")
 
 # Bar charts from mean data
-sex_agonistic_summary <- agonistic_analysis_data %>%
+sex_agonistic_summary <- total_data %>%
   filter(PCRsex == "M" | PCRsex == "F") %>%
   group_by(PCRsex) %>%
   summarise(mean_agonistic = mean(Agonistic_Rate), se_agonistic = 
@@ -303,7 +346,7 @@ sex_agonistic_bar
 
 ggsave("output/sex_agonistic_bar.png")
 
-morph_agonistic_summary <- agonistic_analysis_data %>%
+morph_agonistic_summary <- total_data %>%
   filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
   group_by(PCRMorph) %>%
   summarise(mean_agonistic = mean(Agonistic_Rate), se_agonistic = 
@@ -322,7 +365,7 @@ morph_agonistic_bar
 
 ggsave("output/morph_agonistic_bar.png")
 
-age_agonistic_summary <- agonistic_analysis_data %>%
+age_agonistic_summary <- total_data %>%
   filter(Winter == "FW" | Winter == "AFW") %>%
   group_by(Winter) %>%
   summarise(mean_agonistic = mean(Agonistic_Rate), se_agonistic = 
@@ -357,3 +400,208 @@ individual_platform_plot <- ggplot(individual_platform_count,
 individual_platform_plot
 
 ggsave("output/individual_platform_plot.png")
+
+# histogram for rate of recipient
+recipient_histogram <- ggplot(total_data, aes(x = Recipient_rate)) +
+  geom_histogram(binwidth = 0.025, colour="black", fill="skyblue") +
+  theme_bw()+
+  ylab("Count") +
+  xlab("Recipient of aggression/sec")
+
+recipient_histogram
+
+ggsave("output/recipient_histogram.png")
+
+# Bar chart for sex recipient occurrence
+# Organize data for plotting/analysis
+sex_count_rec_data <- total_data %>%
+  count(PCRsex, Recipient_Occurrence)
+
+sex_count_rec_data$Recipient_Occurrence <- as.factor(sex_count_rec_data$Recipient_Occurrence)
+
+sex_count_rec_data <- sex_count_rec_data %>%
+  mutate(Recipient_Occurrence = ifelse(Recipient_Occurrence == "1", 
+                                       "Recipient", "Nonrecipient"))
+
+# Graph using bar chart 
+sex_recipient_count <- ggplot(sex_count_rec_data, aes(x = PCRsex, y = n, 
+                                                  fill = Recipient_Occurrence)) +
+  geom_bar(stat = 'identity', position = 'fill') +
+  xlab("Sex") +
+  ylab("Proportion") + 
+  theme_bw()+
+  theme(legend.title=element_blank())
+
+sex_recipient_count
+
+ggsave("output/sex_recipient_count.png")
+
+# Bar chart for morph recipient occurrence
+# Organize data for plotting/analysis
+morph_count_rec_data <- total_data %>%
+  count(PCRMorph, Recipient_Occurrence)
+
+morph_count_rec_data$Recipient_Occurrence <- as.factor(morph_count_rec_data$Recipient_Occurrence)
+
+morph_count_rec_data <- morph_count_rec_data %>%
+  mutate(Recipient_Occurrence = ifelse(Recipient_Occurrence == "1", 
+                                       "Recipient", "Nonrecipient"))
+
+# Graph using bar chart 
+morph_recipient_count <- ggplot(morph_count_rec_data, aes(x = PCRMorph, y = n, 
+                                                      fill = Recipient_Occurrence)) +
+  geom_bar(stat = 'identity', position = 'fill') +
+  xlab("Morph") +
+  ylab("Proportion") + 
+  theme_bw()+
+  theme(legend.title=element_blank())
+
+morph_recipient_count
+
+ggsave("output/morph_recipient_count.png")
+
+# Bar chart for age recipient occurrence
+# Organize data for plotting/analysis
+age_count_rec_data <- total_data %>%
+  count(Winter, Recipient_Occurrence)
+
+age_count_rec_data$Recipient_Occurrence <- as.factor(age_count_rec_data$Recipient_Occurrence)
+
+age_count_rec_data <- age_count_rec_data %>%
+  mutate(Recipient_Occurrence = ifelse(Recipient_Occurrence == "1", 
+                                       "Recipient", "Nonrecipient"))
+
+# Graph using bar chart 
+age_recipient_count <- ggplot(age_count_rec_data, aes(x = Winter, y = n, 
+                                                  fill = Recipient_Occurrence)) +
+  geom_bar(stat = 'identity', position = 'fill') +
+  xlab("Age") +
+  ylab("Proportion") + 
+  theme_bw()+
+  theme(legend.title=element_blank())
+
+age_recipient_count
+
+ggsave("output/age_recipient_count.png")
+
+# Graph recipient occurrence for wing 
+wing_recipient_binomial <- ggplot(total_data, aes(Wing, Recipient_Occurrence)) +
+  geom_count(show.legend = FALSE) + # Geom count changes size of points to count
+  geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")), 
+              color = "slateblue", fill = "lightskyblue2") +
+  ylab ("Recipient of Aggression") +
+  xlab ("Wing Chord (mm)") +
+  theme_bw()
+# Create a graph with male/female (1/0) on y and wing chord on x 
+
+wing_recipient_binomial #Call object 
+
+ggsave("output/wing_recipient_binomial.png")
+
+# Graph recipient occurrence for feeding density
+density_recipient_binomial <- ggplot(total_data, aes(Feeding_Density, Recipient_Occurrence)) +
+  geom_count(show.legend = FALSE) + # Geom count changes size of points to count
+  geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")), 
+              color = "slateblue", fill = "lightskyblue2") +
+  ylab ("Recipient of Aggression") +
+  xlab ("Feeding Density") +
+  theme_bw()
+# Create a graph with male/female (1/0) on y and wing chord on x 
+
+density_recipient_binomial #Call object 
+
+ggsave("output/density_recipient_binomial.png")
+
+# Graph recipient occurrence for platform time
+platform_time_recipient_binomial <- ggplot(total_data, aes(Platform_Time, Recipient_Occurrence)) +
+  geom_point(show.legend = FALSE) + # Geom count changes size of points to count
+  geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")), 
+              color = "slateblue", fill = "lightskyblue2") +
+  ylab ("Recipient of Aggression") +
+  xlab ("Conspecific Feeding Time (s)") +
+  theme_bw()
+# Create a graph with male/female (1/0) on y and wing chord on x 
+
+platform_time_recipient_binomial #Call object 
+
+ggsave("output/platform_time_recipient_binomial.png")
+
+# Bar charts from mean data
+sex_recipient_summary <- total_data %>%
+  filter(PCRsex == "M" | PCRsex == "F") %>%
+  group_by(PCRsex) %>%
+  summarise(mean_recipient = mean(Recipient_rate), se_recipient = 
+              sd(Recipient_rate/sqrt(n())))
+
+sex_recipient_bar <- ggplot(sex_recipient_summary, aes(x = PCRsex, y = mean_recipient)) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
+  geom_errorbar(aes(ymin = mean_recipient - se_recipient,
+                    ymax = mean_recipient + se_recipient), width = 0.1) +
+  theme_bw() +
+  xlab("Sex") +
+  ylab("Mean Recipient Rate (interactions/s)")
+
+sex_recipient_bar
+
+ggsave("output/sex_recipient_bar.png")
+
+morph_recipient_summary <- total_data %>%
+  filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
+  group_by(PCRMorph) %>%
+  summarise(mean_recipient = mean(Recipient_rate), se_recipient = 
+              sd(Recipient_rate/sqrt(n())))
+
+morph_recipient_bar <- ggplot(morph_recipient_summary, aes(x = PCRMorph, 
+                                                           y = mean_recipient)) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
+  geom_errorbar(aes(ymin = mean_recipient - se_recipient,
+                    ymax = mean_recipient + se_recipient), width = 0.1) +
+  theme_bw() +
+  xlab("Morph") +
+  ylab("Mean Recipient Rate (interactions/s)")
+
+morph_recipient_bar
+
+ggsave("output/morph_recipinet_bar.png")
+
+age_recipient_summary <- total_data %>%
+  filter(Winter == "FW" | Winter == "AFW") %>%
+  group_by(Winter) %>%
+  summarise(mean_recipient = mean(Recipient_rate), se_recipient = 
+              sd(Recipient_rate/sqrt(n())))
+
+age_recipient_bar <- ggplot(age_recipient_summary, aes(x = Winter, y = mean_recipient)) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
+  geom_errorbar(aes(ymin = mean_recipient - se_recipient,
+                    ymax = mean_recipient + se_recipient), width = 0.1) +
+  theme_bw() +
+  xlab("Age") +
+  ylab("Mean Recipient Rate (interactions/s)")
+
+age_recipient_bar
+
+ggsave("output/age_recipient_bar.png")
+
+# scatterplot for wing data
+wing_recipient <- ggplot(total_data, aes(Wing, Recipient_rate)) + 
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_bw() +
+  ylab("Recipient Interactions/sec") +
+  xlab("Wing Chord (mm)")
+
+wing_recipient
+
+ggsave("output/recipient_wing.png")
+
+# scatterplot for density data
+density_recipient <- ggplot(total_data, aes(Feeding_Density, Recipient_rate)) + 
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_bw() +
+  ylab("Recipient Interactions/sec") +
+  xlab("Feeding Density")
+
+density_recipient
+
+ggsave("output/recipient_density.png")
