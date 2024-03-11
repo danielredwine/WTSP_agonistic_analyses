@@ -4,11 +4,6 @@
 # Clear environment
 rm(list = ls())
 
-oo <- options(repos = "https://cran.r-project.org/")
-install.packages("Matrix")
-install.packages("lme4")
-options(oo)
-
 # Load all libraries needed
 library(tidyverse)
 library(lme4)
