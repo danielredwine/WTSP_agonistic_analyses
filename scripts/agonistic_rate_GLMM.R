@@ -30,8 +30,9 @@ total_data$Platform_Time <- as.numeric(total_data$Platform_Time)
 total_data$Aggressor_Occurrence <- as.numeric(total_data$Aggressor_Occurrence)
 
 # Build the total aggressor model
-aggression_poisson_model <- glmer(Agonistic_Rate~PCRsex+PCRMorph+Winter+Wing+
-                                    Feeding_Density+ (1|SampleID), data = total_data, inverse.gaussian(link = "1/mu^2"))
+aggression_poisson_model <- glmer(Total_Agonistic~PCRsex+PCRMorph+Winter+Wing+
+                                    Feeding_Density+ (1|SampleID) +
+                                    offset(log(Platform_Time)), data = total_data, family = poisson)
 
 # Model Summary
 summary(aggression_poisson_model)
@@ -45,23 +46,23 @@ dredge_aggressor_poisson <- dredge(aggression_poisson_model)
 
 subset(dredge_aggressor_poisson, delta <4)
 
-sw(dredge_aggressor_binomial) #notice this is the global model, not just the competitive model set
+sw(dredge_aggressor_poisson) #notice this is the global model, not just the competitive model set
 
 # Build the total recipient model
-recipient_binomial_model <- glmer(Recipient_Occurrence~PCRsex+PCRMorph+Winter+Wing+
-                                    Feeding_Density+Platform_Time+ (1|SampleID), data = total_data, family = binomial)
+recipient_poisson_model <- glmer(Total_Recipient~PCRsex+PCRMorph+Winter+Wing+
+                                    Feeding_Density+ (1|SampleID) +
+                                    offset(log(Platform_Time)), data = total_data, family = poisson)
 
 # Model Summary
-summary(recipient_binomial_model)
+summary(recipient_poisson_model)
 
 # Check assumptions
-performance::check_model(recipient_binomial_model)
+performance::check_model(recipient_poisson_model)
 
 
 options(na.action = "na.fail") # otherwise blows up with NA values
-dredge_recipient_binomial <- dredge(recipient_binomial_model)
+dredge_recipient_poisson <- dredge(recipient_poisson_model)
 
-subset(dredge_recipient_binomial, delta <4)
+subset(dredge_recipient_poisson, delta <4)
 
-sw(dredge_recipient_binomial) #notice this is the global model, not just the competitive model set
-
+sw(dredge_recipient_poisson) #notice this is the global model, not just the competitive model set
