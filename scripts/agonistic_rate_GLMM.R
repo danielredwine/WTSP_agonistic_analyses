@@ -42,9 +42,9 @@ performance::check_model(aggression_poisson_model)
 
 
 options(na.action = "na.fail") # otherwise blows up with NA values
-dredge_aggressor_poisson <- dredge(aggression_poisson_model)
+dredge_aggressor_poisson <- dredge(aggression_poisson_model) # All combos lazy mode
 
-subset(dredge_aggressor_poisson, delta <4)
+subset(dredge_aggressor_poisson, delta <4) # Only show less than 4 aicc
 
 sw(dredge_aggressor_poisson) #notice this is the global model, not just the competitive model set
 
@@ -61,7 +61,7 @@ performance::check_model(recipient_poisson_model)
 
 
 options(na.action = "na.fail") # otherwise blows up with NA values
-dredge_recipient_poisson <- dredge(recipient_poisson_model)
+dredge_recipient_poisson <- dredge(recipient_poisson_model) #all combos lazy mode
 
 subset(dredge_recipient_poisson, delta <4)
 
