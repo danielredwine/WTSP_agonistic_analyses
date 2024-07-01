@@ -28,7 +28,7 @@ agonistic_analysis_data$Feeding_Density <- as.numeric(agonistic_analysis_data$Fe
 # Clean out NA and X
 total_data <- agonistic_analysis_data %>%
   dplyr::select(SampleID, Winter, Wing, PCRsex, PCRMorph, Agonistic_Rate, Platform_Time, Aggressor_Occurrence, Recipient_Occurrence, 
-                Recipient_rate, Feeding_Density) %>%
+                Recipient_rate, Feeding_Density, Total_Agonistic, Total_Recipient) %>%
   na.omit() %>%
   filter(Winter == "FW" | Winter == "AFW") %>%
   filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
@@ -561,7 +561,7 @@ sex_recipient_bar <- ggplot(sex_recipient_summary, aes(x = PCRsex, y = mean_reci
                     ymax = mean_recipient + se_recipient), width = 0.1) +
   theme_bw() +
   xlab("Sex") +
-  ylab("Mean Recipient Rate (interactions/s)")
+  ylab("Mean Rate Targetted (interactions/s)")
 
 sex_recipient_bar
 
@@ -580,7 +580,7 @@ morph_recipient_bar <- ggplot(morph_recipient_summary, aes(x = PCRMorph,
                     ymax = mean_recipient + se_recipient), width = 0.1) +
   theme_bw() +
   xlab("Morph") +
-  ylab("Mean Recipient Rate (interactions/s)")
+  ylab("Mean Rate Targetted (interactions/s)")
 
 morph_recipient_bar
 
@@ -598,7 +598,7 @@ age_recipient_bar <- ggplot(age_recipient_summary, aes(x = Winter, y = mean_reci
                     ymax = mean_recipient + se_recipient), width = 0.1) +
   theme_bw() +
   xlab("Age") +
-  ylab("Mean Recipient Rate (interactions/s)")
+  ylab("Mean Rate Targetted (interactions/s)")
 
 age_recipient_bar
 
@@ -609,7 +609,7 @@ wing_recipient <- ggplot(total_data, aes(Wing, Recipient_rate)) +
   geom_point() +
   geom_smooth(method="lm") +
   theme_bw() +
-  ylab("Recipient Interactions/sec") +
+  ylab("Rate Targetted (interactions/s)") +
   xlab("Wing Chord (mm)")
 
 wing_recipient
@@ -621,7 +621,7 @@ density_recipient <- ggplot(total_data, aes(Feeding_Density, Recipient_rate)) +
   geom_point() +
   geom_smooth(method="lm") +
   theme_bw() +
-  ylab("Recipient Interactions/sec") +
+  ylab("Rate Targetted (interactions/s)") +
   xlab("Feeding Density")
 
 density_recipient
