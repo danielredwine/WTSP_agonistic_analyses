@@ -110,7 +110,7 @@ density_agonistic <- ggplot(total_data, aes(Feeding_Density, Agonistic_Rate)) +
   geom_point() +
   geom_smooth(method="lm") +
   theme_bw() +
-  ylab("Interactions/sec") +
+  ylab("Rate of Aggression (interactions/s)") +
   xlab("Feeding Density")
 
 density_agonistic
@@ -122,7 +122,7 @@ agonistic_rate_histogram <- ggplot(total_data, aes(x = Agonistic_Rate)) +
   geom_histogram(binwidth = 0.025, colour="black", fill="skyblue") +
   theme_bw()+
   ylab("Count") +
-  xlab("Interactions/sec")
+  xlab("Rate of Aggression (interactions/s)")
 
 agonistic_rate_histogram
 
@@ -133,7 +133,7 @@ aggression_histogram <- ggplot(total_data, aes(x = Total_Agonistic)) +
   geom_histogram(binwidth = 1, colour="black", fill="skyblue") +
   theme_bw()+
   ylab("Count") +
-  xlab("Interactions")
+  xlab("Individual Aggression Counts")
 
 aggression_histogram
 
@@ -351,7 +351,7 @@ sex_agonistic_bar <- ggplot(sex_agonistic_summary, aes(x = PCRsex, y = mean_agon
                     ymax = mean_agonistic + se_agonistic), width = 0.1) +
   theme_bw() +
   xlab("Sex") +
-  ylab("Mean Agonistic Rate (interactions/s)")
+  ylab("Mean Rate of Aggression (interactions/s)")
 
 sex_agonistic_bar
 
@@ -370,7 +370,7 @@ morph_agonistic_bar <- ggplot(morph_agonistic_summary, aes(x = PCRMorph,
                     ymax = mean_agonistic + se_agonistic), width = 0.1) +
   theme_bw() +
   xlab("Morph") +
-  ylab("Mean Agonistic Rate (interactions/s)")
+  ylab("Mean Rate of Aggression (interactions/s)")
 
 morph_agonistic_bar
 
@@ -388,7 +388,7 @@ age_agonistic_bar <- ggplot(age_agonistic_summary, aes(x = Winter, y = mean_agon
                     ymax = mean_agonistic + se_agonistic), width = 0.1) +
   theme_bw() +
   xlab("Age") +
-  ylab("Mean Agonistic Rate (interactions/s)")
+  ylab("Mean Rate of Aggression (interactions/s)")
 
 age_agonistic_bar
 
