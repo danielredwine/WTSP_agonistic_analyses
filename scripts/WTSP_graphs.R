@@ -117,16 +117,27 @@ density_agonistic
 
 ggsave("output/agonistic_density.png")
 
-# histogram for rate of agonistic behavior
-agonistic_histogram <- ggplot(total_data, aes(x = Agonistic_Rate)) +
+# histogram for rate of agonistic rate
+agonistic_rate_histogram <- ggplot(total_data, aes(x = Agonistic_Rate)) +
   geom_histogram(binwidth = 0.025, colour="black", fill="skyblue") +
   theme_bw()+
   ylab("Count") +
   xlab("Interactions/sec")
 
-agonistic_histogram
+agonistic_rate_histogram
 
 ggsave("output/agonistic_histogram.png")
+
+# histogram for agonistic counts
+aggression_histogram <- ggplot(total_data, aes(x = Total_Agonistic)) +
+  geom_histogram(binwidth = 1, colour="black", fill="skyblue") +
+  theme_bw()+
+  ylab("Count") +
+  xlab("Interactions")
+
+aggression_histogram
+
+ggsave("output/aggression_histogram.png")
 
 # Bar chart for sex aggression occurrence
 # Organize data for plotting/analysis
@@ -411,6 +422,17 @@ recipient_histogram <- ggplot(total_data, aes(x = Recipient_rate)) +
 recipient_histogram
 
 ggsave("output/recipient_histogram.png")
+
+# histogram for target counts
+target_histogram <- ggplot(total_data, aes(x = Total_Recipient)) +
+  geom_histogram(binwidth = 1, colour="black", fill="skyblue") +
+  theme_bw()+
+  ylab("Count") +
+  xlab("Number Targeted")
+
+target_histogram
+
+ggsave("output/target_histogram.png")
 
 # Bar chart for sex recipient occurrence
 # Organize data for plotting/analysis
