@@ -28,6 +28,8 @@ total_data$Wing <- as.numeric(total_data$Wing)
 total_data$Feeding_Density <- as.numeric(total_data$Feeding_Density)
 total_data$Platform_Time <- as.numeric(total_data$Platform_Time)
 total_data$Aggressor_Occurrence <- as.numeric(total_data$Aggressor_Occurrence)
+total_data$adjusted_wing <- as.numeric(total_data$adjusted_wing)
+
 
 # Filter out zeros for aggressors
 nonzero_aggressor_data <- total_data %>%
@@ -38,7 +40,7 @@ nonzero_target_data <- total_data %>%
   filter(Total_Recipient != 0)
 
 # Build the total aggressor model
-aggression_poisson_model <- glmer(Total_Agonistic~PCRsex+PCRMorph+Winter+Wing+
+aggression_poisson_model <- glmer(Total_Agonistic~PCRsex+PCRMorph+Winter+adjusted_wing+
                                     Feeding_Density+ (1|SampleID) +
                                     offset(log(Platform_Time)),
                                   data = nonzero_aggressor_data, family = poisson)
@@ -58,7 +60,7 @@ subset(dredge_aggressor_poisson, delta <4) # Only show less than 4 aicc
 sw(dredge_aggressor_poisson) #notice this is the global model, not just competitive models
 
 # Build the total recipient model
-recipient_poisson_model <- glmer(Total_Recipient~PCRsex+PCRMorph+Winter+Wing+
+recipient_poisson_model <- glmer(Total_Recipient~PCRsex+PCRMorph+Winter+adjusted_wing+
                                    Feeding_Density+ (1|SampleID) +
                                    offset(log(Platform_Time)), 
                                  data = nonzero_target_data, family = poisson)

@@ -17,8 +17,6 @@ agonistic_analysis_data$PCRMorph <- as.factor(agonistic_analysis_data$PCRMorph)
 agonistic_analysis_data$Winter <- as.factor(agonistic_analysis_data$Winter)
 agonistic_analysis_data$Wing <- as.numeric(agonistic_analysis_data$Wing)
 agonistic_analysis_data$Agonistic_Rate <- as.numeric(agonistic_analysis_data$Agonistic_Rate)
-agonistic_analysis_data$Lunge_Rate <- as.numeric(agonistic_analysis_data$Lunge_Rate)
-agonistic_analysis_data$Lunge_Occurrence <- as.numeric(agonistic_analysis_data$Lunge_Occurrence)
 agonistic_analysis_data$Recipient_Occurrence <- as.numeric(agonistic_analysis_data$Recipient_Occurrence)
 agonistic_analysis_data$Recipient_rate <- as.numeric(agonistic_analysis_data$Recipient_rate)
 agonistic_analysis_data$Feeding_Density <- as.numeric(agonistic_analysis_data$Feeding_Density)
@@ -28,7 +26,7 @@ agonistic_analysis_data$Feeding_Density <- as.numeric(agonistic_analysis_data$Fe
 # Clean out NA and X
 total_data <- agonistic_analysis_data %>%
   dplyr::select(SampleID, Winter, Wing, PCRsex, PCRMorph, Agonistic_Rate, Platform_Time, Aggressor_Occurrence, Recipient_Occurrence, 
-                Recipient_rate, Feeding_Density, Total_Agonistic, Total_Recipient) %>%
+                Recipient_rate, Feeding_Density, Total_Agonistic, Total_Recipient, adjusted_wing) %>%
   na.omit() %>%
   filter(Winter == "FW" | Winter == "AFW") %>%
   filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
@@ -36,25 +34,25 @@ total_data <- agonistic_analysis_data %>%
 
 # Create data for sex data even if other fields are missing
 sex_data <- agonistic_analysis_data %>%
-  dplyr::select(SampleID, PCRsex, Agonistic_Rate, Lunge_Rate, Lunge_Occurrence,
+  dplyr::select(SampleID, PCRsex, Agonistic_Rate,
                 Aggressor_Occurrence) %>%
   filter(PCRsex == "M" | PCRsex == "F")
 
 # Create data for morph data even if other fields are missing
 morph_data <- agonistic_analysis_data %>%
-  dplyr::select(SampleID, PCRMorph, Agonistic_Rate, Lunge_Rate, Lunge_Occurrence,
+  dplyr::select(SampleID, PCRMorph, Agonistic_Rate,
                 Aggressor_Occurrence) %>%
   filter(PCRMorph == "WS" | PCRMorph == "TS")
 
 # create data for age data even if other fields are missing
 age_data <- agonistic_analysis_data %>%
-  dplyr::select(SampleID, Winter, Agonistic_Rate, Lunge_Rate, Lunge_Occurrence,
+  dplyr::select(SampleID, Winter, Agonistic_Rate,
                 Aggressor_Occurrence) %>%
   filter(Winter == "FW" | Winter == "AFW")
 
 # create data for wing data even if other fields are missing
 wing_data <- agonistic_analysis_data %>%
-  dplyr::select(SampleID, Wing, Agonistic_Rate, Lunge_Rate, Lunge_Occurrence,
+  dplyr::select(SampleID, Wing, Agonistic_Rate,
                 Aggressor_Occurrence)
 
 # boxplot for sex data
@@ -104,6 +102,18 @@ wing_agonistic <- ggplot(total_data, aes(Wing, Agonistic_Rate)) +
 wing_agonistic
 
 ggsave("output/agonistic_wing.png")
+
+# scatterplot for adjusted wing data
+adjusted_wing_agonistic <- ggplot(total_data, aes(adjusted_wing, Agonistic_Rate)) + 
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_bw() +
+  ylab("Interactions/sec") +
+  xlab("Adjusted Wing")
+
+adjusted_wing_agonistic
+
+ggsave("output/agonistic_adjusted_wing.png")
 
 # scatterplot for density data
 density_agonistic <- ggplot(total_data, aes(Feeding_Density, Agonistic_Rate)) + 
@@ -615,6 +625,18 @@ wing_recipient <- ggplot(total_data, aes(Wing, Recipient_rate)) +
 wing_recipient
 
 ggsave("output/recipient_wing.png")
+
+# scatterplot for wing data adjusted
+adjusted_wing_recipient <- ggplot(total_data, aes(adjusted_wing, Recipient_rate)) + 
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_bw() +
+  ylab("Rate Targetted (interactions/s)") +
+  xlab("Adjusted Wing")
+
+adjusted_wing_recipient
+
+ggsave("output/recipient_adjusted_wing.png")
 
 # scatterplot for density data
 density_recipient <- ggplot(total_data, aes(Feeding_Density, Recipient_rate)) + 

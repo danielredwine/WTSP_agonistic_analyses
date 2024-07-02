@@ -1,5 +1,5 @@
 # Daniel Redwine
-# Last edited: 11 Jan 24
+# Last edited: 2 July 24
 
 # Clear environment
 rm(list = ls())
@@ -53,11 +53,6 @@ wtsp_sex_morph_data <- wtsp_sex_morph_data %>%
 wtsp_banding_data <- wtsp_banding_data %>%
   dplyr::select(SampleID, Wing, age_2023, age_2024)
 
-# Create a column for just rate of lunges, and if lunges occurred
-wtsp_agonistic_data <- wtsp_agonistic_data %>%
-  mutate(Lunge_Rate = Lunge/Platform_Time) %>%
-  mutate(Lunge_Occurrence = ifelse(Lunge_Rate == 0, 0,1))
-
 # Select what we need, or in this case don't need from agonistic data
 wtsp_agonistic_data <- wtsp_agonistic_data %>%
   dplyr::select(-Lunge, -Displacement, -Fight, -Chase, -Colors.Left.Top.Bottom,
@@ -67,7 +62,35 @@ wtsp_agonistic_data <- wtsp_agonistic_data %>%
 smb_data <- full_join(wtsp_banding_data, wtsp_sex_morph_data, by = "SampleID")
 
 # Now adjust wing by sex and morph
+# Remove any NA/X sex and morph
+wing_analysis_data <- smb_data %>%
+  filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
+  filter(PCRsex == "M" | PCRsex == "F")
 
+wing_analysis_data$Wing <- as.numeric(wing_analysis_data$Wing)
+
+# Model to show significance
+wing_model <- lm(Wing ~ PCRsex + PCRMorph, data = wing_analysis_data)
+
+summary(wing_model)
+
+# Calculate mean and SE of wing for all combinations of PCRsex and PCRMorph
+wing_summary <- wing_analysis_data %>%
+  group_by(PCRsex, PCRMorph) %>%
+  summarise(
+    mean_wing = mean(Wing),
+    se_wing = sd(Wing) / sqrt(n())
+  )
+
+# Join the means back to the original dataset
+smb_data$Wing <- as.numeric(smb_data$Wing)
+
+smb_data <- smb_data %>%
+  left_join(wing_summary, by = c("PCRsex", "PCRMorph"))
+
+# Adjust the Wing values by subtracting the group means
+smb_data <- smb_data %>%
+  mutate(adjusted_wing = Wing - mean_wing)
 
 # Now merge with the agonistic data
 # we only want to add to agonistic data so we use left_join
@@ -91,7 +114,7 @@ write_excel_csv(agonistic_analysis_data, "data/agonistic_analysis_data.csv")
 # Clean out NA and X
 total_data <- agonistic_analysis_data %>%
   dplyr::select(SampleID, Winter, Wing, PCRsex, PCRMorph, Agonistic_Rate, Platform_Time, Aggressor_Occurrence, Recipient_Occurrence, 
-                Recipient_rate, Feeding_Density, OrdDay, Platform, Total_Recipient, Total_Agonistic) %>%
+                Recipient_rate, Feeding_Density, OrdDay, Platform, Total_Recipient, Total_Agonistic, adjusted_wing) %>%
   na.omit() %>%
   filter(Winter == "FW" | Winter == "AFW") %>%
   filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
