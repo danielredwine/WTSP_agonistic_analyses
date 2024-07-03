@@ -32,6 +32,10 @@ total_data <- agonistic_analysis_data %>%
   filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
   filter(PCRsex == "M" | PCRsex == "F")
 
+# To clear out outliers?
+# total_data <- total_data %>%
+# filter(Agonistic_Rate < 0.05) 
+
 # Create data for sex data even if other fields are missing
 sex_data <- agonistic_analysis_data %>%
   dplyr::select(SampleID, PCRsex, Agonistic_Rate,
