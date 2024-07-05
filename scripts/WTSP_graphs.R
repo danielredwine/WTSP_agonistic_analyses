@@ -261,7 +261,6 @@ platform_time_binomial <- ggplot(total_data, aes(Platform_Time, Aggressor_Occurr
   ylab ("Occurrence of Aggression") +
   xlab ("Conspecific Feeding Time (s)") +
   theme_bw()
-# Create a graph with male/female (1/0) on y and wing chord on x 
 
 platform_time_binomial #Call object 
 
@@ -542,7 +541,6 @@ density_recipient_binomial <- ggplot(total_data, aes(Feeding_Density, Recipient_
   ylab ("Recipient of Aggression") +
   xlab ("Feeding Density") +
   theme_bw()
-# Create a graph with male/female (1/0) on y and wing chord on x 
 
 density_recipient_binomial #Call object 
 
