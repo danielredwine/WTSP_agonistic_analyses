@@ -23,7 +23,7 @@ wtsp_agonistic_data <- read.csv("data/WTSP_agonistic_behavior_data.csv")
 # Wing to adjust wing length for sex and morph as proxy for body size
 # Year, Age, and Month to use mutate to add 2023 age and 2024 age
 wtsp_banding_data <- wtsp_banding_data %>%
-  filter(New_Recap == "N") %>%
+  filter(New_Recap == "N" | (New_Recap =="R" & SampleID =="W320")) %>%
   dplyr::select(SampleID, Wing, BirdAge, Year, Month)
 
 # Mutate to autofill age for 2023
@@ -74,13 +74,18 @@ wing_model <- lm(Wing ~ PCRsex + PCRMorph, data = wing_analysis_data)
 
 summary(wing_model)
 
-# Calculate mean and SE of wing for all combinations of PCRsex and PCRMorph
+# Create a complete grid of PCRsex and PCRMorph
+combinations <- expand.grid(
+  PCRsex = unique(wing_analysis_data$PCRsex),
+  PCRMorph = unique(wing_analysis_data$PCRMorph)
+)
+
+# Calculate mean of wing for all combinations of PCRsex and PCRMorph
 wing_summary <- wing_analysis_data %>%
   group_by(PCRsex, PCRMorph) %>%
-  summarise(
-    mean_wing = mean(Wing),
-    se_wing = sd(Wing) / sqrt(n())
-  )
+  summarise(mean_wing = mean(Wing, na.rm = TRUE)) %>%
+  right_join(combinations, by = c("PCRsex", "PCRMorph")) %>%
+  replace_na(list(mean_wing = NA))
 
 # Join the means back to the original dataset
 smb_data$Wing <- as.numeric(smb_data$Wing)
