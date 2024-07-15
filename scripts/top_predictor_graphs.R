@@ -7,6 +7,7 @@ rm(list = ls())
 # Load packages
 library(tidyverse)
 library(patchwork)
+library(MASS)
 
 # Import dataset
 total_data <- read.csv("data/total_data.csv")
