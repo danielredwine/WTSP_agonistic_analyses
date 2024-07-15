@@ -25,8 +25,8 @@ aggressor_time_binomial <- ggplot(total_data, aes(Platform_Time, Aggressor_Occur
   geom_point(show.legend = FALSE) + # Geom count changes size of points to count
   geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")), 
               color = "slateblue", fill = "lightskyblue2") +
-  ylab ("Occurrence of Aggression") +
-  xlab ("Conspecific Foraging Time (s)") +
+  ylab ("Aggression Occurrence") +
+  xlab ("Foraging Time (s)") +
   theme_bw()
 
 aggressor_time_binomial #Call object 
@@ -38,10 +38,11 @@ ggsave("output/significant_predictors/aggressor_time_binomial.png") # Save objec
 aggressor_density_rate_nonzero <- ggplot(aggressor_nonzero_data, 
                             aes(Feeding_Density, Total_Agonistic/log(Platform_Time))) + 
   geom_point() +
-  geom_smooth(method="glm.nb") +
+  geom_smooth(method="glm.nb", 
+              color = "slateblue", fill = "lightskyblue2") +
   theme_bw() +
-  ylab("Total Aggression/log(foraging time)") +
-  xlab("Feeding Density") +
+  ylab("Aggression Rate") +
+  xlab("Foraging Density") +
   coord_cartesian(xlim = c(2, 8), ylim = c(0, 1.5))
 
 aggressor_density_rate_nonzero # call object
@@ -69,8 +70,8 @@ target_density_binomial <- ggplot(total_data, aes(Feeding_Density, Recipient_Occ
   geom_count(show.legend = FALSE) + # Geom count changes size of points to count
   geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")), 
               color = "slateblue", fill = "lightskyblue2") +
-  ylab ("Target of Aggression") +
-  xlab ("Feeding Density") +
+  ylab ("Target Occurrence") +
+  xlab ("Foraging Density") +
   theme_bw()
 
 target_density_binomial #Call object 
@@ -83,8 +84,8 @@ target_time_binomial <- ggplot(total_data, aes(Platform_Time, Recipient_Occurren
   geom_point(show.legend = FALSE) + # Geom count changes size of points to count
   geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")), 
               color = "slateblue", fill = "lightskyblue2") +
-  ylab ("Target of Aggression") +
-  xlab ("Conspecific Foraging Time (s)") +
+  ylab ("Target Occurrence") +
+  xlab ("Foraging Time (s)") +
   theme_bw()
 
 target_time_binomial #Call object 
@@ -95,7 +96,8 @@ ggsave("output/significant_predictors/target_time_binomial.png") # save object
 target_density_rate_nonzero <- ggplot(target_nonzero_data, 
                             aes(Feeding_Density, Total_Recipient/log(Platform_Time))) + 
   geom_point() +
-  geom_smooth(method="glm.nb") +
+  geom_smooth(method="glm.nb", 
+              color = "slateblue", fill = "lightskyblue2") +
   theme_bw() +
   ylab("Total Target/log(foraging time)") +
   xlab("Feeding Density") +
@@ -154,7 +156,8 @@ ggsave("output/significant_predictors/target_age_rate.png") # save
 target_density_rate <- ggplot(total_data, 
                             aes(Feeding_Density, Total_Recipient/log(Platform_Time))) + 
   geom_point() +
-  geom_smooth(method="glm.nb") +
+  geom_smooth(method="glm.nb", 
+              color = "slateblue", fill = "lightskyblue2") +
   theme_bw() +
   ylab("Total Target/log(foraging time)") +
   xlab("Feeding Density") +
@@ -168,11 +171,12 @@ ggsave("output/significant_predictors/target_density_rate.png") # save
 target_wing_rate <- ggplot(total_data, 
                            aes(adjusted_wing, Total_Recipient/log(Platform_Time))) + 
   geom_count(show.legend = FALSE) +
-  geom_smooth(method="glm.nb") +
+  geom_smooth(method="glm.nb", 
+              color = "slateblue", fill = "lightskyblue2") +
   theme_bw() +
   ylab("Rate Targetted") +
   xlab("Adjusted Wing") +
-  coord_cartesian(ylim = c( 0 , 2))
+  coord_cartesian(ylim = c( 0 , 1.75))
 
 target_wing_rate # call
 
