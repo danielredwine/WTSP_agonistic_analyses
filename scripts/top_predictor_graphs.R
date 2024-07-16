@@ -99,7 +99,7 @@ target_density_rate_nonzero <- ggplot(target_nonzero_data,
   geom_smooth(method="glm.nb", 
               color = "slateblue", fill = "lightskyblue2") +
   theme_bw() +
-  ylab("Total Target/log(foraging time)") +
+  ylab("Rate Targetted)") +
   xlab("Feeding Density") +
   coord_cartesian(xlim = c(2, 8), ylim = c(0, 3))
 
@@ -159,7 +159,7 @@ target_density_rate <- ggplot(total_data,
   geom_smooth(method="glm.nb", 
               color = "slateblue", fill = "lightskyblue2") +
   theme_bw() +
-  ylab("Total Target/log(foraging time)") +
+  ylab("Rate Targetted") +
   xlab("Feeding Density") +
   coord_cartesian(xlim = c(2, 8), ylim = c(0, 3))
 
@@ -181,3 +181,18 @@ target_wing_rate <- ggplot(total_data,
 target_wing_rate # call
 
 ggsave("output/significant_predictors/target_wing_rate.png") # save
+
+# scatterplot for wing data adjusted
+target_wing_rate_nonzero <- ggplot(target_nonzero_data, 
+                           aes(adjusted_wing, Total_Recipient/log(Platform_Time))) + 
+  geom_point(show.legend = FALSE) +
+  geom_smooth(method="glm.nb", 
+              color = "slateblue", fill = "lightskyblue2") +
+  theme_bw() +
+  ylab("Rate Targetted") +
+  xlab("Adjusted Wing") +
+  coord_cartesian(ylim = c( 0 , 3))
+
+target_wing_rate_nonzero # call
+
+ggsave("output/significant_predictors/target_wing_rate_nonzero.png") # save
