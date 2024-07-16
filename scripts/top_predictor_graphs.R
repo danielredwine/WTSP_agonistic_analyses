@@ -160,7 +160,7 @@ target_density_rate <- ggplot(total_data,
               color = "slateblue", fill = "lightskyblue2") +
   theme_bw() +
   ylab("Rate Targetted") +
-  xlab("Feeding Density") +
+  xlab("Foraging Density") +
   coord_cartesian(xlim = c(2, 8), ylim = c(0, 3))
 
 target_density_rate # call
