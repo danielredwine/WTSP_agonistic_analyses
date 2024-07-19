@@ -58,7 +58,7 @@ age_target_proportion <- total_data %>%
 # Create bar plot
 target_age_binomial <- ggplot(age_target_proportion, aes(x = Winter , y = proportion)) +
   geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
-  labs(x = "Age", y = "Proportion Targetted") +
+  labs(x = "Age", y = "Proportion targeted") +
   theme_bw()
 
 target_age_binomial # call object
@@ -99,7 +99,7 @@ target_density_rate_nonzero <- ggplot(target_nonzero_data,
   geom_smooth(method="glm.nb", 
               color = "slateblue", fill = "lightskyblue2") +
   theme_bw() +
-  ylab("Rate Targetted)") +
+  ylab("Rate targeted") +
   xlab("Feeding Density") +
   coord_cartesian(xlim = c(2, 8), ylim = c(0, 3))
 
@@ -124,7 +124,7 @@ target_age_rate_nonzero <- ggplot(target_age_summary_nonzero,
                     ymax = mean_recipient + se_recipient), width = 0.1) +
   theme_bw() +
   xlab("Age") +
-  ylab("Rate Targetted")
+  ylab("Rate targeted")
 
 target_age_rate_nonzero # call 
 
@@ -146,7 +146,7 @@ target_age_rate <- ggplot(target_age_summary,
                     ymax = mean_recipient + se_recipient), width = 0.1) +
   theme_bw() +
   xlab("Age") +
-  ylab("Rate Targetted")
+  ylab("Rate targeted")
 
 target_age_rate # call
 
@@ -159,7 +159,7 @@ target_density_rate <- ggplot(total_data,
   geom_smooth(method="glm.nb", 
               color = "slateblue", fill = "lightskyblue2") +
   theme_bw() +
-  ylab("Rate Targetted") +
+  ylab("Rate targeted") +
   xlab("Foraging Density") +
   coord_cartesian(xlim = c(2, 8), ylim = c(0, 3))
 
@@ -174,7 +174,7 @@ target_wing_rate <- ggplot(total_data,
   geom_smooth(method="glm.nb", 
               color = "slateblue", fill = "lightskyblue2") +
   theme_bw() +
-  ylab("Rate Targetted") +
+  ylab("Rate targeted") +
   xlab("Adjusted Wing") +
   coord_cartesian(ylim = c( 0 , 1.75))
 
@@ -189,10 +189,46 @@ target_wing_rate_nonzero <- ggplot(target_nonzero_data,
   geom_smooth(method="glm.nb", 
               color = "slateblue", fill = "lightskyblue2") +
   theme_bw() +
-  ylab("Rate Targetted") +
+  ylab("Rate targeted") +
   xlab("Adjusted Wing") +
   coord_cartesian(ylim = c( 0 , 3))
 
 target_wing_rate_nonzero # call
 
 ggsave("output/significant_predictors/target_wing_rate_nonzero.png") # save
+
+sex_count <- total_data %>%
+  count(PCRsex)
+
+morph_count <- total_data %>%
+  count(PCRMorph)
+
+age_count <- total_data %>%
+  count(Winter)
+
+sex_ratio <- ggplot(sex_count, aes(x = PCRsex , y = n)) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
+  labs(x = "Age", y = "Count") +
+  theme_bw()
+
+sex_ratio # call object
+
+ggsave("output/significant_predictors/sex_ratio.png") # save object
+
+morph_ratio <- ggplot(morph_count, aes(x = PCRMorph , y = n)) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
+  labs(x = "Morph", y = "Count") +
+  theme_bw()
+
+morph_ratio # call object
+
+ggsave("output/significant_predictors/morph_ratio.png") # save object
+
+age_ratio <- ggplot(age_count, aes(x = Winter , y = n)) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
+  labs(x = "Age", y = "Count") +
+  theme_bw()
+
+age_ratio # call object
+
+ggsave("output/significant_predictors/age_ratio.png") # save object
