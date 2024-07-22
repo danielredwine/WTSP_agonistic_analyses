@@ -651,3 +651,216 @@ density_recipient <- ggplot(total_data, aes(Feeding_Density, Recipient_rate)) +
 density_recipient
 
 ggsave("output/recipient_density.png")
+
+# Plots for recipient interaction effects
+# Sex and morph
+# Summary
+sex_morph_recipient_summary <- total_data %>%
+  filter(PCRsex == "M" | PCRsex == "F") %>%
+  filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
+  group_by(PCRsex, PCRMorph) %>%
+  summarise(mean_recipient = mean(Total_Recipient/log(Platform_Time)), se_recipient = 
+              sd((Total_Recipient/log(Platform_Time))/sqrt(n())))
+
+# Plot                
+sex_morph_recipient_bar <- ggplot(sex_morph_recipient_summary, 
+                                  aes(x = PCRsex, y = mean_recipient, fill = PCRMorph)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = mean_recipient - se_recipient,
+                    ymax = mean_recipient + se_recipient), 
+                width = 0.2, 
+                position = position_dodge(width = 0.9),
+                color = "black") +
+  theme_bw() +
+  xlab("Sex") +
+  ylab("Mean Rate Targetted (interactions/s)")
+
+# Call
+sex_morph_recipient_bar
+
+# Save
+ggsave("output/sex_morph_recipient_bar.png")
+
+sex_age_recipient_summary <- total_data %>%
+  filter(PCRsex == "M" | PCRsex == "F") %>%
+  filter(Winter == "FW" | Winter == "AFW") %>%
+  group_by(PCRsex, Winter) %>%
+  summarise(mean_recipient = mean(Total_Recipient/log(Platform_Time)), se_recipient = 
+              sd((Total_Recipient/log(Platform_Time))/sqrt(n())))
+
+sex_age_recipient_bar <- ggplot(sex_age_recipient_summary, 
+                                  aes(x = PCRsex, y = mean_recipient, fill = Winter)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = mean_recipient - se_recipient,
+                    ymax = mean_recipient + se_recipient), 
+                width = 0.2, 
+                position = position_dodge(width = 0.9),
+                color = "black") +
+  theme_bw() +
+  xlab("Sex") +
+  ylab("Mean Rate Targetted (interactions/s)")
+
+sex_age_recipient_bar
+
+ggsave("output/sex_age_recipient_bar.png")
+
+morph_age_recipient_summary <- total_data %>%
+  filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
+  filter(Winter == "FW" | Winter == "AFW") %>%
+  group_by(PCRMorph, Winter) %>%
+  summarise(mean_recipient = mean(Total_Recipient/log(Platform_Time)), se_recipient = 
+              sd((Total_Recipient/log(Platform_Time))/sqrt(n())))
+
+morph_age_recipient_bar <- ggplot(morph_age_recipient_summary, 
+                                aes(x = PCRMorph, y = mean_recipient, fill = Winter)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = mean_recipient - se_recipient,
+                    ymax = mean_recipient + se_recipient), 
+                width = 0.2, 
+                position = position_dodge(width = 0.9),
+                color = "black") +
+  theme_bw() +
+  xlab("Sex") +
+  ylab("Mean Rate Targetted (interactions/s)")
+
+morph_age_recipient_bar
+
+ggsave("output/morph_age_recipient_bar.png")
+
+# Plots for aggression interaction effects
+# Sex and morph
+# Summary
+sex_morph_aggression_summary <- total_data %>%
+  filter(PCRsex == "M" | PCRsex == "F") %>%
+  filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
+  group_by(PCRsex, PCRMorph) %>%
+  summarise(mean_aggressor = mean(Total_Agonistic/log(Platform_Time)), se_aggressor = 
+              sd((Total_Agonistic/log(Platform_Time))/sqrt(n())))
+
+# Plot                
+sex_morph_aggression_bar <- ggplot(sex_morph_aggression_summary, 
+                                  aes(x = PCRsex, y = mean_aggressor, fill = PCRMorph)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = mean_aggressor - se_aggressor,
+                    ymax = mean_aggressor + se_aggressor), 
+                width = 0.2, 
+                position = position_dodge(width = 0.9),
+                color = "black") +
+  theme_bw() +
+  xlab("Sex") +
+  ylab("Mean Aggression Rate (interactions/log(s))")
+
+# Call
+sex_morph_aggression_bar
+
+# Save
+ggsave("output/sex_morph_aggression_bar.png")
+
+sex_age_aggressor_summary <- total_data %>%
+  filter(PCRsex == "M" | PCRsex == "F") %>%
+  filter(Winter == "FW" | Winter == "AFW") %>%
+  group_by(PCRsex, Winter) %>%
+  summarise(mean_aggressor = mean(Total_Agonistic/log(Platform_Time)), se_aggressor = 
+              sd((Total_Agonistic/log(Platform_Time))/sqrt(n())))
+
+sex_age_aggressor_bar <- ggplot(sex_age_aggressor_summary, 
+                                aes(x = PCRsex, y = mean_aggressor, fill = Winter)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = mean_aggressor - se_aggressor,
+                    ymax = mean_aggressor + se_aggressor), 
+                width = 0.2, 
+                position = position_dodge(width = 0.9),
+                color = "black") +
+  theme_bw() +
+  xlab("Sex") +
+  ylab("Mean Aggression Rate (interactions/log(s))")
+
+sex_age_aggressor_bar
+
+ggsave("output/sex_age_aggressor_bar.png")
+
+morph_age_aggressor_summary <- total_data %>%
+  filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
+  filter(Winter == "FW" | Winter == "AFW") %>%
+  group_by(PCRMorph, Winter) %>%
+  summarise(mean_aggressor = mean(Total_Agonistic/log(Platform_Time)), se_aggressor = 
+              sd((Total_Agonistic/log(Platform_Time))/sqrt(n())))
+
+morph_age_aggressor_bar <- ggplot(morph_age_aggressor_summary, 
+                                  aes(x = PCRMorph, y = mean_aggressor, fill = Winter)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = mean_aggressor - se_aggressor,
+                    ymax = mean_aggressor + se_aggressor), 
+                width = 0.2, 
+                position = position_dodge(width = 0.9),
+                color = "black") +
+  theme_bw() +
+  xlab("Sex") +
+  ylab("Mean Aggression Rate (interactions/log(s))")
+
+morph_age_aggressor_bar
+
+ggsave("output/morph_age_aggressor_bar.png")
+
+# Three way interaction graphs with sex, age, and morph
+age_sex_morph_aggressor_summary <- total_data %>%
+  group_by(PCRsex, PCRMorph, Winter) %>%
+  summarise(mean_aggressor = mean(Total_Agonistic/log(Platform_Time)), se_aggressor = 
+              sd((Total_Agonistic/log(Platform_Time))/sqrt(n())))
+
+age_sex_morph_aggressor_bar <- ggplot(age_sex_morph_aggressor_summary, 
+                                  aes(x = PCRsex, y = mean_aggressor, fill = PCRMorph)) +
+  facet_wrap(~Winter) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = mean_aggressor - se_aggressor,
+                    ymax = mean_aggressor + se_aggressor), 
+                width = 0.2, 
+                position = position_dodge(width = 0.9),
+                color = "black") +
+  theme_bw() +
+  xlab("Sex") +
+  ylab("Mean Aggression Rate (interactions/log(s))")
+
+age_sex_morph_aggressor_bar
+
+ggsave("output/age_sex_morph_aggressor_bar.png")
+
+# Three way interaction graphs with sex, age, and morph
+age_sex_morph_target_summary <- total_data %>%
+  group_by(PCRsex, PCRMorph, Winter) %>%
+  summarise(mean_target = mean(Total_Recipient/log(Platform_Time)), se_target = 
+              sd((Total_Recipient/log(Platform_Time))/sqrt(n())))
+
+age_sex_morph_target_bar <- ggplot(age_sex_morph_target_summary, 
+                                      aes(x = PCRsex, y = mean_target, fill = PCRMorph)) +
+  facet_wrap(~Winter) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = mean_target - se_target,
+                    ymax = mean_target + se_target), 
+                width = 0.2, 
+                position = position_dodge(width = 0.9),
+                color = "black") +
+  theme_bw() +
+  xlab("Sex") +
+  ylab("Mean Target Rate (interactions/log(s))")
+
+age_sex_morph_target_bar
+
+ggsave("output/age_sex_morph_target_bar.png")
+
+# Counts of each age sex morph
+age_sex_morph_count <- total_data %>%
+  group_by(PCRsex, PCRMorph, Winter) %>%
+  count()
+
+age_sex_morph_count_bar <- ggplot(age_sex_morph_count, aes(x = PCRsex, y = n,
+                                                           fill = PCRMorph)) +
+  facet_wrap(~Winter) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black") +
+  theme_bw() +
+  xlab("Sex") +
+  ylab("Count")
+
+age_sex_morph_count_bar
+
+ggsave("output/age_sex_morph_count_bar.png")
