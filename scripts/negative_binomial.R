@@ -33,7 +33,7 @@ total_data$adjusted_wing <- as.numeric(total_data$adjusted_wing)
 
 
 # Build the total aggressor model
-aggression_nb_model <- glmer.nb(Total_Agonistic~PCRsex+PCRMorph+Winter+adjusted_wing+
+aggression_nb_model <- glmer.nb(Total_Agonistic~PCRsex*PCRMorph+Winter+adjusted_wing+
                                     Feeding_Density+ (1|SampleID) +
                                     offset(log(Platform_Time)), data = total_data)
 
@@ -52,7 +52,7 @@ subset(dredge_aggressor_nb, delta <4) # Only show less than 4 aicc
 sw(dredge_aggressor_nb) #notice this is the global model, not just the competitive model set
 
 # Build the total recipient model
-recipient_nb_model <- glmer.nb(Total_Recipient~PCRsex+PCRMorph+Winter+adjusted_wing+
+recipient_nb_model <- glmer.nb(Total_Recipient~PCRsex*PCRMorph+Winter+adjusted_wing+
                                    Feeding_Density+ (1|SampleID) +
                                    offset(log(Platform_Time)), data = total_data)
 

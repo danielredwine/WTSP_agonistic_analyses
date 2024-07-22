@@ -31,8 +31,9 @@ total_data$Aggressor_Occurrence <- as.numeric(total_data$Aggressor_Occurrence)
 total_data$adjusted_wing <- as.numeric(total_data$adjusted_wing)
 
 # Build the total aggressor model
-aggressor_binomial_model <- glmer(Aggressor_Occurrence~PCRsex+PCRMorph+Winter+adjusted_wing+
-          Feeding_Density+Platform_Time+ (1|SampleID), data = total_data, family = binomial)
+aggressor_binomial_model <- glmer(Aggressor_Occurrence~Winter+adjusted_wing+
+          Feeding_Density+Platform_Time+PCRsex*PCRMorph+(1|SampleID), 
+          data = total_data, family = binomial)
 
 # Model Summary
 summary(aggressor_binomial_model)
@@ -49,8 +50,9 @@ subset(dredge_aggressor_binomial, delta <4)
 sw(dredge_aggressor_binomial) #notice this is the global model, not just the competitive model set
 
 # Build the total recipient model
-recipient_binomial_model <- glmer(Recipient_Occurrence~PCRsex+PCRMorph+Winter+adjusted_wing+
-                                    Feeding_Density+Platform_Time+ (1|SampleID), data = total_data, family = binomial)
+recipient_binomial_model <- glmer(Recipient_Occurrence~Winter+adjusted_wing+
+                                    Feeding_Density+Platform_Time+PCRsex*PCRMorph+ 
+                                    (1|SampleID), data = total_data, family = binomial)
 
 # Model Summary
 summary(recipient_binomial_model)
