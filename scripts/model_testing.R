@@ -171,14 +171,10 @@ BIC(target_poisson_model, nb_target_model, target_tnb_hurdle_model,
 options(na.action = "na.fail") # otherwise blows up with NA values
 dredge_aggressor_tp_hurdle <- dredge(aggressor_tp_hurdle_model)
 
-subset(dredge_aggressor_tp_hurdlel, delta < 2.01)
-
-sw(dredge_aggressor_tp_hurdle) # note this is the global model, not just the competitive
+subset(dredge_aggressor_tp_hurdle, delta < 3)
 
 # AIC for target model
 options(na.action = "na.fail") # otherwise blows up with NA values
 dredge_target_tp_hurdle <- dredge(target_tp_hurdle_model)
 
-subset(dredge_target_tp_hurdlel, delta < 2.01)
-
-sw(dredge_target_tp_hurdle) # note this is the global model, not just competitive
+subset(dredge_target_tp_hurdle, delta < 3)
