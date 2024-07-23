@@ -4,13 +4,16 @@
 # Clear environment
 rm(list = ls())
 
+# Load libraries
 library(tidyverse)
 library(lme4)
 library(DHARMa)
 library(MASS)
 library(pscl)
 library(glmmTMB)
+library(MuMIn)
 
+# Load dataset
 total_data <- read.csv("data/total_data.csv")
 
 # Fit Poisson GLMM for aggressors and targets
@@ -22,7 +25,7 @@ aggression_poisson_model <- glmer(Total_Agonistic ~ Winter + adjusted_wing +
 
 summary(aggression_poisson_model) # model summary
 
-target_poisson_model <- glmer(Total_Recipient ~ Winter + adjusted_wing + 
+target_poisson_model <- glmer(Total_Recipient ~ Winter + adjusted_wing +
                                     Feeding_Density + PCRsex * PCRMorph + 
                                     (1 | SampleID) + offset(log(Platform_Time)), 
                                   data = total_data, 
@@ -76,49 +79,110 @@ testZeroInflation(sim_res_target_nb)
 
 
 
-# Fit the hurdle model with random effects using glmmTMB
-aggressor_hurdle_model <- glmmTMB(Total_Agonistic ~ Winter + adjusted_wing + 
-                                    Feeding_Density + Platform_Time + PCRsex * PCRMorph + 
-                                    (1 | SampleID),
-                        ziformula = ~1, # Zero-inflation part, adjust as needed
-                        family = truncated_nbinom2, # Negative binomial distribution
-                        data = total_data)
-
-# Model summary
-summary(aggressor_hurdle_model)
-
-# Fit the hurdle model with random effects using glmmTMB
-target_hurdle_model <- glmmTMB(Total_Recipient ~ Winter + adjusted_wing + 
-                                    Feeding_Density + Platform_Time + PCRsex * PCRMorph + 
-                                    (1 | SampleID),
-                                  ziformula = ~1, # Zero-inflation part, adjust as needed
-                                  family = truncated_nbinom2, # Negative binomial distribution
+# Fit the truncated poisson hurdle model with random effects using glmmTMB
+aggressor_tp_hurdle_model <- glmmTMB(Total_Agonistic ~ Winter + adjusted_wing 
+                                  + Feeding_Density + PCRsex * PCRMorph + (1 | SampleID) 
+                                  + offset(log(Platform_Time)),
+                                  ziformula = ~.,
+                                  family = truncated_poisson, 
                                   data = total_data)
 
+# Model summary
+summary(aggressor_tp_hurdle_model)
+
+# Fit the truncated poisson hurdle model with random effects using glmmTMB
+target_tp_hurdle_model <- glmmTMB(Total_Recipient ~ Winter + adjusted_wing 
+                               + Feeding_Density + PCRsex * PCRMorph + (1 | SampleID) 
+                               + offset(log(Platform_Time)),
+                               ziformula = ~.,
+                               family = truncated_poisson, 
+                               data = total_data)
+
 # Check model summary
-summary(target_hurdle_model)
+summary(target_tp_hurdle_model)
 
-# Check model diagnostics for aggressor model
-sim_res_aggressor_hurdle <- simulateResiduals(aggressor_hurdle_model)
-plot(sim_res_aggressor_hurdle)
-testDispersion(sim_res_aggressor_hurdle)
-testZeroInflation(sim_res_aggressor_hurdle)
+# Check model diagnostics for truncated negative binomial aggressor model
+sim_res_aggressor_hurdle_tp <- simulateResiduals(aggressor_tp_hurdle_model)
+plot(sim_res_aggressor_hurdle_tp)
+testDispersion(sim_res_aggressor_hurdle_tp)
+testZeroInflation(sim_res_aggressor_hurdle_tp)
 
-# Check model diagnostics for target model
-sim_res_target_hurdle <- simulateResiduals(target_hurdle_model)
-plot(sim_res_target_hurdle)
-testDispersion(sim_res_target_hurdle)
-testZeroInflation(sim_res_target_hurdle)
+# Check model diagnostics for truncated negative binomial target model
+sim_res_target_hurdle_tp <- simulateResiduals(target_tp_hurdle_model)
+plot(sim_res_target_hurdle_tp)
+testDispersion(sim_res_target_hurdle_tp)
+testZeroInflation(sim_res_target_hurdle_tp)
 
+# Fit the truncated nb hurdle model with random effects using glmmTMB
+aggressor_tnb_hurdle_model <- glmmTMB(Total_Agonistic ~ Winter + adjusted_wing 
+                                      + Feeding_Density + PCRsex * PCRMorph 
+                                      + (1 | SampleID) + offset(log(Platform_Time)),
+                                      ziformula = ~.,
+                                      family = truncated_nbinom2, 
+                                      data = total_data)
+
+# Model summary
+summary(aggressor_tnb_hurdle_model)
+
+# Fit the truncated nb hurdle model with random effects using glmmTMB
+target_tnb_hurdle_model <- glmmTMB(Total_Recipient ~ Winter + adjusted_wing 
+                                   + Feeding_Density + PCRsex * PCRMorph + (1 | SampleID) 
+                                   + offset(log(Platform_Time)),
+                                   ziformula = ~.,
+                                   family = truncated_nbinom2, 
+                                   data = total_data)
+
+# Check model summary
+summary(target_tnb_hurdle_model)
+
+# Check model diagnostics for truncated negative binomial aggressor model
+sim_res_aggressor_hurdle_tnb <- simulateResiduals(aggressor_tnb_hurdle_model)
+plot(sim_res_aggressor_hurdle_tnb)
+testDispersion(sim_res_aggressor_hurdle_tnb)
+testZeroInflation(sim_res_aggressor_hurdle_tnb)
+
+# Check model diagnostics for truncated negative binomial target model
+sim_res_target_hurdle_tnb <- simulateResiduals(target_tnb_hurdle_model)
+plot(sim_res_target_hurdle_tnb)
+testDispersion(sim_res_target_hurdle_tnb)
+testZeroInflation(sim_res_target_hurdle_tnb)
 
 # Compare AIC values for aggressor models
-AIC(aggression_poisson_model, nb_aggressor_model, aggressor_hurdle_model)
+AIC(aggression_poisson_model, nb_aggressor_model, aggressor_tnb_hurdle_model,
+    aggressor_tp_hurdle_model)
 
 # Compare BIC values
-BIC(aggression_poisson_model, nb_aggressor_model, aggressor_hurdle_model)
+BIC(aggression_poisson_model, nb_aggressor_model, aggressor_tnb_hurdle_model,
+    aggressor_tp_hurdle_model)
 
 # Compare AIC values for target models
-AIC(target_poisson_model, nb_target_model, target_hurdle_model)
+AIC(target_poisson_model, nb_target_model, target_tnb_hurdle_model,
+    target_tp_hurdle_model)
 
 # Compare BIC values
-BIC(target_poisson_model, nb_target_model, target_hurdle_model)
+BIC(target_poisson_model, nb_target_model, target_tnb_hurdle_model,
+    target_tp_hurdle_model)
+
+# ZIP models keep breaking, so they need to be figured out
+# Unsure of where to go from here, AIC indicates NB, while assumptions indicate TP Hurdle
+# We will use Truncated Poisson for now as it seems to violate the least assumptions?
+
+# AIC for aggressor model
+options(na.action = "na.fail") # otherwise blows up with NA values
+dredge_aggressor_tp_hurdle <- dredge(aggressor_tp_hurdle_model)
+
+subset(dredge_aggressor_tp_hurdlel, delta <4)
+
+sw(dredge_aggressor_tp_hurdle) # note this is the global model, not just the competitive
+
+
+# AIC for target model
+options(na.action = "na.fail") # otherwise blows up with NA values
+dredge_target_tp_hurdle <- dredge(target_tp_hurdle_model)
+
+subset(dredge_target_tp_hurdlel, delta <4)
+
+sw(dredge_target_tp_hurdle) # note this is the global model, not just competitive
+
+
+
