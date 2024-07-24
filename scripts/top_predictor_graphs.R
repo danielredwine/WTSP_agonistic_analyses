@@ -134,6 +134,39 @@ target_age_rate_nonzero # call
 
 ggsave("output/significant_predictors/target_age_rate_nonzero.png") # save 
 
+# Create_boxplot
+target_age_nonzero_boxplot <- ggplot(target_nonzero_data, 
+  aes(x = Winter, y = Total_Recipient/log(Platform_Time))) +
+  geom_violin( size = 0.7, fill = "skyblue") +
+  geom_boxplot(fill = "ivory3",size = 0.7, width = 0.1, outlier.shape = NA) +
+  theme_bw() +
+  xlab("Age") +
+  ylab("Rate targeted")
+
+target_age_nonzero_boxplot
+
+# Create_boxplot
+target_sex_nonzero_boxplot <- ggplot(target_nonzero_data, 
+                                     aes(x = PCRsex, y = Total_Recipient/log(Platform_Time))) +
+  geom_violin( size = 0.7, fill = "skyblue") +
+  geom_boxplot(fill = "ivory3",size = 0.7, width = 0.1, outlier.shape = NA) +
+  theme_bw() +
+  xlab("Sex") +
+  ylab("Rate targeted")
+
+target_sex_nonzero_boxplot
+
+# Create_boxplot
+target_morph_nonzero_boxplot <- ggplot(target_nonzero_data, 
+                                     aes(x = PCRMorph, y = Total_Recipient/log(Platform_Time))) +
+  geom_violin( size = 0.7, fill = "skyblue") +
+  geom_boxplot(fill = "ivory3",size = 0.7, width = 0.1, outlier.shape = NA) +
+  theme_bw() +
+  xlab("Morph") +
+  ylab("Rate targeted")
+
+target_morph_nonzero_boxplot
+
 # graph target rate by sex for nonzero data 
 # create summary data 
 target_sex_summary_nonzero <- target_nonzero_data %>%
