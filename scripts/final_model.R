@@ -8,6 +8,7 @@ rm(list = ls())
 library(glmmTMB)
 library(MuMIn)
 library(tidyverse)
+library(DHARMa)
 
 # Load dataset
 total_data <- read.csv("data/total_data.csv")
@@ -29,7 +30,9 @@ target_tp_hurdle_model <- glmmTMB(Total_Recipient ~ Winter + adjusted_wing
                                   ziformula = ~.,
                                   offset = log(Platform_Time),
                                   family = truncated_poisson, 
-                                  data = total_data)
+                                  data = total_data, 
+                                  control = glmmTMBControl(optimizer = optim, 
+                                              optArgs = list(method = "L-BFGS-B")))
 
 # Check model summary
 summary(target_tp_hurdle_model)
@@ -47,6 +50,7 @@ testDispersion(sim_res_target_hurdle_tp)
 testZeroInflation(sim_res_target_hurdle_tp)
 
 # Dredge to create every possible variable combination
+options(na.action = "na.fail") # otherwise blows up with NA values
 dredge_aggressor_tp_hurdle <- dredge(aggressor_tp_hurdle_model, rank = "AIC")
 dredge_target_tp_hurdle <- dredge(target_tp_hurdle_model, rank = "AIC")
 

@@ -40,7 +40,7 @@ nonzero_target_data <- total_data %>%
   filter(Total_Recipient != 0)
 
 # Build the total aggressor model
-aggression_nb_model <- glmer.nb(Total_Agonistic~PCRsex+PCRMorph+Winter+adjusted_wing+
+aggression_nb_model <- glmer.nb(Total_Agonistic~PCRsex*PCRMorph+Winter+adjusted_wing+
                                     Feeding_Density+ (1|SampleID) +
                                     offset(log(Platform_Time)),
                                   data = nonzero_aggressor_data)
@@ -60,7 +60,7 @@ subset(dredge_aggressor_nb, delta <4) # Only show less than 4 aicc
 sw(dredge_aggressor_nb) #notice this is the global model, not just competitive models
 
 # Build the total recipient model
-recipient_nb_model <- glmer.nb(Total_Recipient~PCRsex+PCRMorph+Winter+adjusted_wing+
+recipient_nb_model <- glmer.nb(Total_Recipient~PCRsex*PCRMorph+Winter+adjusted_wing+
                                    Feeding_Density+ (1|SampleID) +
                                    offset(log(Platform_Time)), 
                                  data = nonzero_target_data)
@@ -75,6 +75,6 @@ performance::check_model(recipient_nb_model)
 options(na.action = "na.fail") # otherwise blows up with NA values
 dredge_recipient_nb <- dredge(recipient_nb_model) #all combos lazy mode
 
-subset(dredge_recipient_nb, delta <4)
+subset(dredge_recipient_nb, delta <10)
 
 sw(dredge_recipient_nb) #notice this is the global models, not just competitive models
