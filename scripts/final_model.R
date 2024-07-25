@@ -9,6 +9,7 @@ library(glmmTMB)
 library(MuMIn)
 library(tidyverse)
 library(DHARMa)
+library(visreg)
 
 # Load dataset
 total_data <- read.csv("data/total_data.csv")
@@ -30,9 +31,7 @@ target_tp_hurdle_model <- glmmTMB(Total_Recipient ~ Winter + adjusted_wing
                                   ziformula = ~.,
                                   offset = log(Platform_Time),
                                   family = truncated_poisson, 
-                                  data = total_data, 
-                                  control = glmmTMBControl(optimizer = optim, 
-                                              optArgs = list(method = "L-BFGS-B")))
+                                  data = total_data)
 
 # Check model summary
 summary(target_tp_hurdle_model)
@@ -49,15 +48,30 @@ plot(sim_res_target_hurdle_tp)
 testDispersion(sim_res_target_hurdle_tp)
 testZeroInflation(sim_res_target_hurdle_tp)
 
-# Dredge to create every possible variable combination
-options(na.action = "na.fail") # otherwise blows up with NA values
-dredge_aggressor_tp_hurdle <- dredge(aggressor_tp_hurdle_model, rank = "AIC")
-dredge_target_tp_hurdle <- dredge(target_tp_hurdle_model, rank = "AIC")
+aggressor_model <- glmmTMB(Total_Agonistic ~ (1 | SampleID),
+                      ziformula = ~  Feeding_Density +  (1 | SampleID),
+                      offset = log(Platform_Time),
+                      family = truncated_poisson, 
+                      data = total_data)
 
-# Create a list of the top models
-top_aggressor_models <- subset(dredge_aggressor_tp_hurdle, delta < 3 )
-top_target_models <- subset(dredge_target_tp_hurdle, delta < 3)
+target_model <- glmmTMB(Total_Recipient ~ PCRsex * PCRMorph + (1 | SampleID),
+                        ziformula = ~ Feeding_Density + Winter + (1 | SampleID),
+                        offset = log(Platform_Time),
+                        family = truncated_poisson, 
+                        data = total_data)
 
-# Call the list of the top models
-top_aggressor_models
-top_target_models
+# Simulate residuals
+sim_res_aggressor <- simulateResiduals(aggressor_model)
+sim_res_target <- simulateResiduals(target_model)
+
+# Plot simulated residuals
+plot(sim_res_aggressor)
+plot(sim_res_target)
+
+# Test dispersion
+testDispersion(sim_res_aggressor)
+testDispersion(sim_res_target)
+
+# Model Summary
+summary(aggressor_model)
+summary(target_model)

@@ -311,3 +311,38 @@ total_vs_observation_morph_chi <- xtabs(n ~ Population + PCRMorph,
 total_vs_observation_morph_chi
 
 chisq.test(total_vs_observation_morph_chi)
+
+# Graphs for just sex and morph
+population_sex_count <- total_population_sex_morph %>%
+  group_by(PCRsex) %>%
+  count()
+
+population_morph_count <- total_population_sex_morph %>%
+  group_by(PCRMorph) %>%
+  count()
+
+total_count <- sum(population_sex_count$n)
+
+population_sex_proportion <- population_sex_count %>%
+  mutate(proportion = n / total_count)
+
+population_morph_proportion <- population_morph_count %>%
+  mutate(proportion = n / total_count)
+
+population_sex_ratio <- ggplot(population_sex_proportion, aes(x = PCRsex , y = proportion)) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
+  labs(x = "Age", y = "Population proportion") +
+  theme_bw()
+
+population_sex_ratio # call object
+
+ggsave("output/significant_predictors/population_sex_ratio.png") # save object
+
+population_morph_ratio <- ggplot(population_morph_proportion, aes(x = PCRMorph , y = proportion)) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
+  labs(x = "Morph", y = "Population proportion") +
+  theme_bw()
+
+population_morph_ratio # call object
+
+ggsave("output/significant_predictors/population_morph_ratio.png") # save object
