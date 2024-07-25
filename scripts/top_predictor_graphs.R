@@ -37,6 +37,20 @@ aggressor_time_offset #Call object
 
 ggsave("output/significant_predictors/aggressor_time_offset.png") # Save object
 
+# Target offset graph for platform time
+# Graph target count for platform time
+target_time_offset <- ggplot(total_data, aes(Platform_Time, Total_Recipient)) +
+  geom_point(show.legend = FALSE) + # Geom count changes size of points to count
+  geom_smooth(method="lm",, 
+              color = "slateblue", fill = "lightskyblue2") +
+  ylab ("Target count") +
+  xlab ("Foraging time (s)") +
+  theme_bw()
+
+target_time_offset #Call object 
+
+ggsave("output/significant_predictors/target_time_offset.png") # Save object
+
 # Graph aggressor occurrence for feeding density
 aggressor_density_binomial <- ggplot(total_data, aes(Feeding_Density, Aggressor_Occurrence)) +
   geom_count(show.legend = FALSE) + # Geom count changes size of points to count
