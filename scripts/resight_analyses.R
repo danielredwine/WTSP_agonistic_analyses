@@ -331,7 +331,7 @@ population_morph_proportion <- population_morph_count %>%
 
 population_sex_ratio <- ggplot(population_sex_proportion, aes(x = PCRsex , y = proportion)) +
   geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
-  labs(x = "Age", y = "Population proportion") +
+  labs(x = "Sex", y = "Population proportion") +
   theme_bw()
 
 population_sex_ratio # call object

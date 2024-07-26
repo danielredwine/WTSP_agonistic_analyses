@@ -180,7 +180,7 @@ age_count <- age_count %>%
 
 sex_ratio <- ggplot(sex_count, aes(x = PCRsex , y = proportion)) +
   geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
-  labs(x = "Age", y = "Observation proportion") +
+  labs(x = "Sex", y = "Observation proportion") +
   theme_bw()
 
 sex_ratio # call object
