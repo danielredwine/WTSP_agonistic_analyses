@@ -80,6 +80,22 @@ target_age_binomial # call object
 
 ggsave("output/significant_predictors/target_age_binomial.png") # save object
 
+# Aggressor age binomial proportion plot
+# Calculate proportions
+age_aggressor_proportion <- total_data %>%
+  group_by(Winter) %>%
+  summarise(proportion = mean(Aggressor_Occurrence))
+
+# Create bar plot
+aggressor_age_binomial <- ggplot(age_aggressor_proportion, aes(x = Winter , y = proportion)) +
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
+  labs(x = "Age", y = "Proportion of aggressors") +
+  theme_bw()
+
+aggressor_age_binomial # call object
+
+ggsave("output/significant_predictors/aggressor_age_binomial.png") # save object
+
 # Graph recipient occurrence for feeding density
 target_density_binomial <- ggplot(total_data, aes(Feeding_Density, Recipient_Occurrence)) +
   geom_count(show.legend = FALSE) + # Geom count changes size of points to count
