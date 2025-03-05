@@ -16,6 +16,11 @@ library(MASS)
 # Import dataset
 total_data <- read.csv("data/total_data.csv")
 
+total_data <- total_data %>%
+  mutate(Winter = recode(Winter, "FW" = "First-winter", "AFW" = "After-first-winter")) %>%
+  mutate(PCRsex = recode(PCRsex, "M" = "Male", "F" = "Female")) %>%
+  mutate(PCRMorph = recode(PCRMorph, "WS" = "White-stripe", "TS" = "Tan-stripe"))
+
 # Create nonzero datasets
 aggressor_nonzero_data <- total_data %>%
   filter(Total_Agonistic > 0)
@@ -109,34 +114,12 @@ target_density_binomial #Call object
 
 ggsave("output/significant_predictors/target_density_binomial.png") # save object
 
-# Create_boxplot
-target_sex_nonzero_boxplot <- ggplot(target_nonzero_data, 
-                                     aes(x = PCRsex, y = Total_Recipient/log(Platform_Time))) +
-  geom_violin( size = 0.7, fill = "skyblue") +
-  geom_boxplot(fill = "ivory3",size = 0.7, width = 0.1, outlier.shape = NA) +
-  theme_bw() +
-  xlab("Sex") +
-  ylab("Mean rate targeted (count/log(s)) +/- se")
-
-target_sex_nonzero_boxplot
-
-# Create_boxplot
-target_morph_nonzero_boxplot <- ggplot(target_nonzero_data, 
-                                aes(x = PCRMorph, y = Total_Recipient/log(Platform_Time))) +
-  geom_violin( size = 0.7, fill = "skyblue") +
-  geom_boxplot(fill = "ivory3",size = 0.7, width = 0.1, outlier.shape = NA) +
-  theme_bw() +
-  xlab("Morph") +
-  ylab("Mean rate targeted (count/log(s)) +/- se")
-
-target_morph_nonzero_boxplot
-
 # graph target rate by sex for nonzero data 
 # create summary data 
 target_sex_summary_nonzero <- target_nonzero_data %>%
   group_by(PCRsex) %>%
-  summarise(mean_recipient = mean(Total_Recipient/log(Platform_Time)), se_recipient = 
-              sd((Total_Recipient/log(Platform_Time))/sqrt(n())))
+  summarise(mean_recipient = mean(Total_Recipient/Platform_Time), se_recipient = 
+              sd((Total_Recipient/Platform_Time)/sqrt(n())))
 
 # create bar chart 
 target_sex_rate_nonzero <- ggplot(target_sex_summary_nonzero, 
@@ -146,7 +129,7 @@ target_sex_rate_nonzero <- ggplot(target_sex_summary_nonzero,
                     ymax = mean_recipient + se_recipient), width = 0.1) +
   theme_bw() +
   xlab("Sex") +
-  ylab("Mean rate targeted (count/log(s)) +/- se")
+  ylab("Mean rate targeted \u00B1 SE")
 
 target_sex_rate_nonzero # call 
 
@@ -156,8 +139,8 @@ ggsave("output/significant_predictors/target_sex_rate_nonzero.png") # save
 # create summary data 
 target_morph_summary_nonzero <- target_nonzero_data %>%
   group_by(PCRMorph) %>%
-  summarise(mean_recipient = mean(Total_Recipient/log(Platform_Time)), se_recipient = 
-              sd((Total_Recipient/log(Platform_Time))/sqrt(n())))
+  summarise(mean_recipient = mean(Total_Recipient/Platform_Time), se_recipient = 
+              sd((Total_Recipient/Platform_Time)/sqrt(n())))
 
 # create bar chart 
 target_morph_rate_nonzero <- ggplot(target_morph_summary_nonzero, 
@@ -167,7 +150,7 @@ target_morph_rate_nonzero <- ggplot(target_morph_summary_nonzero,
                     ymax = mean_recipient + se_recipient), width = 0.1) +
   theme_bw() +
   xlab("Morph") +
-  ylab("Mean rate targeted (count/log(s)) +/- se")
+  ylab("Mean rate targeted \u00B1 SE")
 
 target_morph_rate_nonzero # call 
 
@@ -225,8 +208,6 @@ ggsave("output/significant_predictors/observation_age_ratio.png") # save object
 # Sex and morph
 # Summary
 sex_morph_recipient_summary <- target_nonzero_data %>%
-  filter(PCRsex == "M" | PCRsex == "F") %>%
-  filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
   group_by(PCRsex, PCRMorph) %>%
   summarise(mean_recipient = mean(Total_Recipient/Platform_Time), se_recipient = 
               sd((Total_Recipient/Platform_Time)/sqrt(n())))
@@ -242,10 +223,12 @@ sex_morph_recipient_bar <- ggplot(sex_morph_recipient_summary,
                 color = "black") +
   theme_bw() +
   xlab("Sex") +
-  ylab("Mean rate targetted (count/log(s)) +/- se")
+  ylab("Mean rate targeted \u00B1 SE") +
+  labs(fill = "Morph") +
+  scale_fill_manual(values = c("aquamarine4", "skyblue"))
 
 # Call
 sex_morph_recipient_bar
 
 # Save
-ggsave("output/significant_predictors/sex_morph_recipient_bar.png")
+ggsave("output/significant_predictors/sex_morph_recipient_bar.png", width = 6, height = 4)

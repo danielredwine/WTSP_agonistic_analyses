@@ -329,6 +329,12 @@ population_sex_proportion <- population_sex_count %>%
 population_morph_proportion <- population_morph_count %>%
   mutate(proportion = n / total_count)
 
+population_sex_proportion <- population_sex_proportion %>%
+  mutate(PCRsex = recode(PCRsex, "M" = "Male", "F" = "Female"))
+
+population_morph_proportion <- population_morph_proportion %>%
+  mutate(PCRMorph = recode(PCRMorph, "WS" = "White-stripe", "TS" = "Tan-stripe"))
+
 population_sex_ratio <- ggplot(population_sex_proportion, aes(x = PCRsex , y = proportion)) +
   geom_bar(stat = "identity", position = "dodge", colour = "black", fill = "skyblue") +
   labs(x = "Sex", y = "Population proportion") +
