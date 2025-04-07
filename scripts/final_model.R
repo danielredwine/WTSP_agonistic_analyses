@@ -15,7 +15,7 @@ library(visreg)
 total_data <- read.csv("data/total_data.csv")
 
 # Fit the truncated poisson hurdle model with random effects using glmmTMB
-aggressor_tp_hurdle_model <- glmmTMB(Total_Agonistic ~ Winter + adjusted_wing 
+aggressor_hurdle_model <- glmmTMB(Total_Agonistic ~ Winter 
                                      + Feeding_Density + PCRsex * PCRMorph + (1 | SampleID),
                                      ziformula = ~.,
                                      offset = log(Platform_Time),
@@ -23,10 +23,10 @@ aggressor_tp_hurdle_model <- glmmTMB(Total_Agonistic ~ Winter + adjusted_wing
                                      data = total_data)
 
 # Model summary
-summary(aggressor_tp_hurdle_model)
+summary(aggressor_hurdle_model)
 
 # Fit the truncated poisson hurdle model with random effects using glmmTMB
-target_tp_hurdle_model <- glmmTMB(Total_Recipient ~ Winter + adjusted_wing 
+target_hurdle_model <- glmmTMB(Total_Recipient ~ Winter 
                                   + Feeding_Density + PCRsex * PCRMorph + (1 | SampleID),
                                   ziformula = ~.,
                                   offset = log(Platform_Time),
@@ -34,44 +34,28 @@ target_tp_hurdle_model <- glmmTMB(Total_Recipient ~ Winter + adjusted_wing
                                   data = total_data)
 
 # Check model summary
-summary(target_tp_hurdle_model)
+summary(target_hurdle_model)
 
-# Check model diagnostics for truncated negative binomial aggressor model
-sim_res_aggressor_hurdle_tp <- simulateResiduals(aggressor_tp_hurdle_model)
-plot(sim_res_aggressor_hurdle_tp)
-testDispersion(sim_res_aggressor_hurdle_tp)
-testZeroInflation(sim_res_aggressor_hurdle_tp)
+# Check model diagnostics for aggressor model
+sim_res_aggressor_hurdle <- simulateResiduals(aggressor_hurdle_model)
+plot(sim_res_aggressor_hurdle)
+testDispersion(sim_res_aggressor_hurdle)
+testZeroInflation(sim_res_aggressor_hurdle)
 
-# Check model diagnostics for truncated negative binomial target model
-sim_res_target_hurdle_tp <- simulateResiduals(target_tp_hurdle_model)
-plot(sim_res_target_hurdle_tp)
-testDispersion(sim_res_target_hurdle_tp)
-testZeroInflation(sim_res_target_hurdle_tp)
+# Check model diagnostics for recipient model
+sim_res_target_hurdle <- simulateResiduals(target_hurdle_model)
+plot(sim_res_target_hurdle)
+testDispersion(sim_res_target_hurdle)
+testZeroInflation(sim_res_target_hurdle)
 
-aggressor_model <- glmmTMB(Total_Agonistic ~ (1 | SampleID),
-                      ziformula = ~  Feeding_Density +  (1 | SampleID),
-                      offset = log(Platform_Time),
-                      family = truncated_poisson, 
-                      data = total_data)
+# AIC for aggressor model
+options(na.action = "na.fail") # otherwise blows up with NA values
+dredge_aggressor_hurdle <- dredge(aggressor_hurdle_model)
 
-target_model <- glmmTMB(Total_Recipient ~ PCRsex * PCRMorph + (1 | SampleID),
-                        ziformula = ~ Feeding_Density + Winter + (1 | SampleID),
-                        offset = log(Platform_Time),
-                        family = truncated_poisson, 
-                        data = total_data)
+subset(dredge_aggressor_hurdle, delta < 3)
 
-# Simulate residuals
-sim_res_aggressor <- simulateResiduals(aggressor_model)
-sim_res_target <- simulateResiduals(target_model)
+# AIC for target model
+options(na.action = "na.fail") # otherwise blows up with NA values
+dredge_target_hurdle <- dredge(target_hurdle_model)
 
-# Plot simulated residuals
-plot(sim_res_aggressor)
-plot(sim_res_target)
-
-# Test dispersion
-testDispersion(sim_res_aggressor)
-testDispersion(sim_res_target)
-
-# Model Summary
-summary(aggressor_model)
-summary(target_model)
+subset(dredge_target_hurdle, delta < 3)
