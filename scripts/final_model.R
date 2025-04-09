@@ -16,7 +16,7 @@ total_data <- read.csv("data/total_data.csv")
 
 # Fit the truncated poisson hurdle model with random effects using glmmTMB
 aggressor_hurdle_model <- glmmTMB(Total_Agonistic ~ Winter 
-                                     + Feeding_Density + PCRsex * PCRMorph + (1 | SampleID),
+                                     + Feeding_Density + PCRsex + PCRMorph + (1 | SampleID),
                                      ziformula = ~.,
                                      offset = log(Platform_Time),
                                      family = truncated_poisson, 
@@ -27,7 +27,7 @@ summary(aggressor_hurdle_model)
 
 # Fit the truncated poisson hurdle model with random effects using glmmTMB
 target_hurdle_model <- glmmTMB(Total_Recipient ~ Winter 
-                                  + Feeding_Density + PCRsex * PCRMorph + (1 | SampleID),
+                                  + Feeding_Density + PCRsex + PCRMorph + (1 | SampleID),
                                   ziformula = ~.,
                                   offset = log(Platform_Time),
                                   family = truncated_poisson, 
