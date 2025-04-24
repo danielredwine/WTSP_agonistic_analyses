@@ -17,7 +17,7 @@ wtsp_resight_data <- read.csv("data/WTSP_video_resight_data.csv")
 population_data <- wtsp_banding_data %>%
   dplyr::select(SampleID, Year, Month, Day) %>%
   filter(Year == 2023 | Year == 2024) %>%
-  filter(Month == 1 | Month == 2 | (Month == 3 & Day < 15)) %>%
+  filter(Month == 1 | Month == 2 | (Month == 3 & Day < 16)) %>%
   filter(SampleID != "")
 
 # Merge the banded population with the resight data
@@ -26,8 +26,7 @@ population_data <- full_join(population_data, wtsp_resight_data, join_by(SampleI
 
 # Select only the variables we need
 population_data <- population_data %>%
-  dplyr::select(SampleID, Year) %>%
-  filter(SampleID != "")
+  dplyr::select(SampleID, Year)
 
 # Filter banding data to only include new and not recaps, includes all SampleID
 # We will use the wing length from only the first capture
@@ -36,7 +35,7 @@ population_data <- population_data %>%
 # Wing to adjust wing length for sex and morph as proxy for body size
 # Year, Age, and Month to use mutate to add 2023 age and 2024 age
 wtsp_banding_data <- wtsp_banding_data %>%
-  filter(New_Recap == "N") %>%
+  filter(New_Recap == "N" | (SampleID == "W320" & New_Recap == "R")) %>%
   dplyr::select(SampleID, BirdAge, Year, Month)
 
 # Mutate to autofill age for 2023
@@ -75,11 +74,11 @@ smb_data <- full_join(wtsp_banding_data, wtsp_sex_morph_data, by = "SampleID")
 # we only want to add to resight data so we use left_join
 resight_analysis_data <- left_join(wtsp_resight_data, smb_data, by = "SampleID")
 
-# Now we will use mutate to create new column Winter
+# Now we will use mutate to create new column Age
 # if Year is 2023 winter will return the value in age_2023, if not returns second if
 # if Year is 2024 returns the value in age_2024, if not either 2023 or 2024 returns NA
 resight_analysis_data <- resight_analysis_data %>%
-  mutate(Winter = ifelse(Year == 2023, age_2023, ifelse(Year == 2024, age_2024, NA)))
+  mutate(Age = ifelse(Year == 2023, age_2023, ifelse(Year == 2024, age_2024, NA)))
 
 # Clean up a bit by removing age 2023 and 2024 with the - sign and select 
 # Doing some of this separate just so we can check each step if my code was right
@@ -93,18 +92,18 @@ write_excel_csv(resight_analysis_data, "data/resight_analysis_data.csv")
 # Clean up dataset by forcing factors and numbers
 resight_analysis_data$PCRsex <- as.factor(resight_analysis_data$PCRsex)
 resight_analysis_data$PCRMorph <- as.factor(resight_analysis_data$PCRMorph)
-resight_analysis_data$Winter <- as.factor(resight_analysis_data$Winter)
+resight_analysis_data$Age <- as.factor(resight_analysis_data$Age)
 resight_analysis_data$Platform <- as.factor(resight_analysis_data$Platform)
 
 # Now to finish the total population data
 # we only want to add to population data so we use left_join
 population_data <- left_join(population_data, smb_data, by = "SampleID")
 
-# Now we will use mutate to create new column Winter
+# Now we will use mutate to create new column Age
 # if Year is 2023 winter will return the value in age_2023, if not returns second if
 # if Year is 2024 returns the value in age_2024, if not either 2023 or 2024 returns NA
 population_data <- population_data %>%
-  mutate(Winter = ifelse(Year == 2023, age_2023, ifelse(Year == 2024, age_2024, NA)))
+  mutate(Age = ifelse(Year == 2023, age_2023, ifelse(Year == 2024, age_2024, NA)))
 
 # Clean up a bit by removing age 2023 and 2024 with the - sign and select 
 # Doing some of this separate just so we can check each step if my code was right
@@ -114,7 +113,7 @@ population_data <- population_data %>%
 # Clean up dataset by forcing factors and numbers
 population_data$PCRsex <- as.factor(population_data$PCRsex)
 population_data$PCRMorph <- as.factor(population_data$PCRMorph)
-population_data$Winter <- as.factor(population_data$Winter)
+population_data$Age <- as.factor(population_data$Age)
 
 # Now to fully clean the population data
 population_data <- population_data %>%
@@ -160,8 +159,8 @@ morph_resight_data <- resight_analysis_data %>%
 
 # create data for age data even if other fields are missing
 age_resight_data <- resight_analysis_data %>%
-  dplyr::select(SampleID, Winter, Platform) %>%
-  filter(Winter == "FW" | Winter == "AFW")
+  dplyr::select(SampleID, Age, Platform) %>%
+  filter(Age == "FW" | Age == "AFW")
 
 # Bar chart for sex resight occurrence
 # Organize data for plotting/analysis
@@ -198,10 +197,10 @@ ggsave("output/morph_resight_plot.png")
 # Bar chart for age resight occurrence
 # Organize data for plotting/analysis
 age_resight_count <- age_resight_data %>%
-  count(Winter, Platform)
+  count(Age, Platform)
 
 # Graph using bar chart 
-age_resight_plot <- ggplot(age_resight_count, aes(x = Winter, y = n, fill = Platform)) +
+age_resight_plot <- ggplot(age_resight_count, aes(x = Age, y = n, fill = Platform)) +
   geom_bar(stat = 'identity', position = 'stack') +
   xlab("age") +
   ylab("Count") + 
