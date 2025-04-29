@@ -127,6 +127,7 @@ total_population_sex_morph <- population_data %>%
 
 # Save the resulting data which represents sex and morph of the total population
 write_excel_csv(total_population_sex_morph, "data/total_population_sex_morph.csv")
+write_excel_csv(population_data, "data/population_data.csv")
 
 # Create population data for individuals with agonistic data
 agonistic_population_sex_morph <- agonistic_analysis_data %>%
