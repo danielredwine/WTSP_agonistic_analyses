@@ -118,7 +118,7 @@ write_excel_csv(agonistic_analysis_data, "data/agonistic_analysis_data.csv")
 
 # Clean out NA and X
 total_data <- agonistic_analysis_data %>%
-  dplyr::select(SampleID, Winter, Wing, PCRsex, PCRMorph, Agonistic_Rate, Platform_Time, Aggressor_Occurrence, Recipient_Occurrence, 
+  dplyr::select(SampleID, Winter, Wing, PCRsex, PCRMorph, Platform_Time, Aggressor_Occurrence, Recipient_Occurrence, 
                 Recipient_rate, Maximum_Foraging_Density, OrdDay, Platform, Total_Recipient, Total_Agonistic, adjusted_wing) %>%
   na.omit() %>%
   filter(Winter == "FW" | Winter == "AFW") %>%
