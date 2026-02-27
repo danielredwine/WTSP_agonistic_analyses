@@ -110,20 +110,8 @@ agonistic_analysis_data <- agonistic_analysis_data %>%
 # Clean up a bit by removing age 2023 and 2024 with the - sign and select 
 # Doing some of this separate just so we can check each step if my code was right
 agonistic_analysis_data <- agonistic_analysis_data %>%
-   dplyr::select(-age_2023, -age_2024)
+   dplyr::select(-age_2023, -age_2024, -mean_wing, -adjusted_wing)
 
 
 # Save the Resulting dataset which we will use for all analyses
 write_excel_csv(agonistic_analysis_data, "data/agonistic_analysis_data.csv")
-
-# Clean out NA and X
-total_data <- agonistic_analysis_data %>%
-  dplyr::select(SampleID, Winter, Wing, PCRsex, PCRMorph, Platform_Time, Aggressor_Occurrence, Recipient_Occurrence, 
-                Recipient_rate, Maximum_Foraging_Density, OrdDay, Platform, Total_Recipient, Total_Agonistic, adjusted_wing) %>%
-  na.omit() %>%
-  filter(Winter == "FW" | Winter == "AFW") %>%
-  filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
-  filter(PCRsex == "M" | PCRsex == "F")
-
-# Save the Resulting dataset which we will use for all analyses
-write_excel_csv(total_data, "data/total_data.csv")
