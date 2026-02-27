@@ -55,8 +55,8 @@ wtsp_banding_data <- wtsp_banding_data %>%
 
 # Select what we need, or in this case don't need from agonistic data
 wtsp_agonistic_data <- wtsp_agonistic_data %>%
-  dplyr::select(-Lunge, -Displacement, -Fight, -Chase, -Colors.Left.Top.Bottom,
-         -Colors.Right.Top.Bottom, -Comments)
+  dplyr::select(-Attack, -Counterattack, -Pursuit, -Contact_Aggression, -Colors.Left.Top.Bottom,
+         -Colors.Right.Top.Bottom)
 
 # Merge sex and morph with the banding data
 smb_data <- full_join(wtsp_banding_data, wtsp_sex_morph_data, by = "SampleID")
@@ -119,7 +119,7 @@ write_excel_csv(agonistic_analysis_data, "data/agonistic_analysis_data.csv")
 # Clean out NA and X
 total_data <- agonistic_analysis_data %>%
   dplyr::select(SampleID, Winter, Wing, PCRsex, PCRMorph, Agonistic_Rate, Platform_Time, Aggressor_Occurrence, Recipient_Occurrence, 
-                Recipient_rate, Feeding_Density, OrdDay, Platform, Total_Recipient, Total_Agonistic, adjusted_wing) %>%
+                Recipient_rate, Maximum_Foraging_Density, OrdDay, Platform, Total_Recipient, Total_Agonistic, adjusted_wing) %>%
   na.omit() %>%
   filter(Winter == "FW" | Winter == "AFW") %>%
   filter(PCRMorph == "WS" | PCRMorph == "TS") %>%
